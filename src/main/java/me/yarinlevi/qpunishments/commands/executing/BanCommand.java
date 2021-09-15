@@ -45,6 +45,6 @@ public class BanCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.ban");
+        return invocation.source().hasPermission("qpunishments.command.ban");
     }
 }

@@ -88,7 +88,7 @@ public class HistoryCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.historyadmin");
+        return invocation.source().hasPermission("qpunishments.command.history");
     }
 
     /*

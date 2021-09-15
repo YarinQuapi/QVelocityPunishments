@@ -27,6 +27,6 @@ public class FindCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.find");
+        return invocation.source().hasPermission("qpunishments.command.find");
     }
 }

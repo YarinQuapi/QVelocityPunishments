@@ -46,6 +46,6 @@ public class MuteCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.mute");
+        return invocation.source().hasPermission("qpunishments.command.mute");
     }
 }

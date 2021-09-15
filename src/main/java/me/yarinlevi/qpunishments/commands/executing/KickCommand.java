@@ -45,6 +45,6 @@ public class KickCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.kick");
+        return invocation.source().hasPermission("qpunishments.command.kick");
     }
 }

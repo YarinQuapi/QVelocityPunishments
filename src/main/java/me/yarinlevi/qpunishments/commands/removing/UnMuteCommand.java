@@ -15,6 +15,6 @@ public class UnMuteCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.unmute");
+        return invocation.source().hasPermission("qpunishments.command.unmute");
     }
 }

@@ -12,6 +12,6 @@ public class ReloadMessages implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.reloadmessages");
+        return invocation.source().hasPermission("qpunishments.command.reloadmessages");
     }
 }

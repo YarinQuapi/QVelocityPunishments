@@ -34,6 +34,6 @@ public class StaffChatCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.commands.staffchat");
+        return invocation.source().hasPermission("qpunishments.command.staffchat");
     }
 }
