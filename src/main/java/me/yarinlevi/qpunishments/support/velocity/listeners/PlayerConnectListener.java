@@ -1,10 +1,10 @@
-package me.yarinlevi.qpunishments.support.bungee.listeners;
+package me.yarinlevi.qpunishments.support.velocity.listeners;
 
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -14,14 +14,14 @@ import java.text.SimpleDateFormat;
 /**
  * @author YarinQuapi
  */
-public class PlayerConnectListener implements Listener {
+public class PlayerConnectListener {
 
-    @EventHandler
+    @Subscribe(order = PostOrder.FIRST)
     public void onConnect(PostLoginEvent event) throws SQLException {
             String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"ban\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"ban\" ORDER BY id DESC;",
                     event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 
-            ResultSet rs = QBungeePunishments.getInstance().getMysql().get(sql);
+            ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
 
             if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date") && rs.getString("server").equalsIgnoreCase("global")) {
                 long timestamp = rs.getLong("expire_date");
@@ -42,23 +42,23 @@ public class PlayerConnectListener implements Listener {
 
             String sql1 = String.format("SELECT * FROM playerData WHERE `uuid`=\"%s\";", event.getPlayer().getUniqueId());
 
-            ResultSet rs1 = QBungeePunishments.getInstance().getMysql().get(sql1);
+            ResultSet rs1 = QVelocityPunishments.getInstance().getMysql().get(sql1);
 
             if (rs1 != null && rs1.next()) {
                 String sql2 = String.format("UPDATE `playerData` set `lastLogin`=\"%s\", `name`=\"%s\" WHERE `uuid`=\"%s\";",
                         System.currentTimeMillis(),
-                        event.getPlayer().getName(),
+                        event.getPlayer().getUsername(),
                         event.getPlayer().getUniqueId());
 
-                QBungeePunishments.getInstance().getProxy().getScheduler().runAsync(QBungeePunishments.getInstance(), () -> QBungeePunishments.getInstance().getMysql().update(sql2));
+                QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> QVelocityPunishments.getInstance().getMysql().update(sql2)).schedule();
             } else {
                 String sql2 = String.format("INSERT INTO `playerData`(`uuid`, `name`, `firstLogin`, `lastLogin`) VALUES(\"%s\", \"%s\",\"%s\", \"%s\");",
                         event.getPlayer().getUniqueId(),
-                        event.getPlayer().getName(),
+                        event.getPlayer().getUsername(),
                         System.currentTimeMillis(),
                         System.currentTimeMillis());
 
-                QBungeePunishments.getInstance().getProxy().getScheduler().runAsync(QBungeePunishments.getInstance(), () -> QBungeePunishments.getInstance().getMysql().update(sql2));
+                QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> QVelocityPunishments.getInstance().getMysql().update(sql2)).schedule();
             }
     }
 }

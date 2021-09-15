@@ -1,7 +1,6 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import com.zaxxer.hikari.HikariDataSource;
-import net.md_5.bungee.config.Configuration;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;

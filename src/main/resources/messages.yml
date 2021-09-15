@@ -32,6 +32,9 @@ lookup_mode_specific: "&7--------- &bLookup &7v&a%1$s &e%2$s &7---------\n"
 you_are_muted: "&cYou have been muted until %e%1$s"
 you_are_banned_disconnect: "&cYou have been banned from this server\nfor &e%1$s\n§cThe ban expires at &e%2$s"
 you_are_banned_chat: "&cYou have been banned from this server for &e%1$s &cuntil &e%2$s"
+you_have_been_banned: "&cYou have been banned!"
+you_have_been_muted: "&cYou have been muted!"
+you_have_been_kicked: "&cYou were kicked from the server!"
 
 # --------------- General Lookup Messages --------------- #
 never_logged_on: "&cNever logged on"

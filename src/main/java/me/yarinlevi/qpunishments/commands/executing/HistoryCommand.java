@@ -1,29 +1,25 @@
 package me.yarinlevi.qpunishments.commands.executing;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
-public class HistoryCommand extends Command implements TabExecutor {
+public class HistoryCommand implements SimpleCommand {
     Pattern numberPattern = Pattern.compile("([0-9])+");
 
-    public HistoryCommand() {
-        super("history", "qpunishments.command.history", "historyadmin", "hadmin", "commentadmin");
-    }
-
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (args.length == 0) {
             sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
         } else {
@@ -42,7 +38,7 @@ public class HistoryCommand extends Command implements TabExecutor {
 
                                 String sql = "UPDATE `proof` SET `content`=\"" + sb + "\"  WHERE `id`=" + id;
 
-                                if (QBungeePunishments.getInstance().getMysql().update(sql) != 0) {
+                                if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
                                     sender.sendMessage(MessagesUtils.getMessage("comment_edit_successful", id));
                                 } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                             } else sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
@@ -51,7 +47,7 @@ public class HistoryCommand extends Command implements TabExecutor {
                         case "removecomment", "rc" -> {
                             String sql = "DELETE FROM `proof` WHERE `id`=" + id;
 
-                            if (QBungeePunishments.getInstance().getMysql().update(sql) != 0) {
+                            if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
                                 sender.sendMessage(MessagesUtils.getMessage("comment_removal_successful", id));
                             } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                         }
@@ -59,7 +55,7 @@ public class HistoryCommand extends Command implements TabExecutor {
                         case "removepunishment", "rp" -> {
                             String sql = "DELETE FROM `punishments` WHERE `id`=" + id;
 
-                            if (QBungeePunishments.getInstance().getMysql().update(sql) != 0) {
+                            if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
                                 sender.sendMessage(MessagesUtils.getMessage("punishment_removal_successful", id));
                             } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                         }
@@ -67,7 +63,7 @@ public class HistoryCommand extends Command implements TabExecutor {
                         case "retrievecomment", "getcomment", "gc" -> {
                             String sql = "SELECT * FROM `proof` WHERE `id`=" + id;
 
-                            ResultSet rs = QBungeePunishments.getInstance().getMysql().get(sql);
+                            ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
 
                             try {
                                 if (rs != null && rs.next()) {
@@ -91,7 +87,12 @@ public class HistoryCommand extends Command implements TabExecutor {
     }
 
     @Override
-    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.command.historyadmin");
+    }
+
+    /*
+    public Iterable<String> onTabComplete(CommandSource sender, String[] args) {
         List<String> list = new ArrayList<>();
 
         if (args.length == 0) {
@@ -103,4 +104,5 @@ public class HistoryCommand extends Command implements TabExecutor {
 
         return list;
     }
+     */
 }

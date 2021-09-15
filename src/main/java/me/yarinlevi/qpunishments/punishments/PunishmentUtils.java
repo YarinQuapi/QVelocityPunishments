@@ -1,10 +1,10 @@
 package me.yarinlevi.qpunishments.punishments;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -13,13 +13,13 @@ import java.util.UUID;
  * @author YarinQuapi
  */
 public class PunishmentUtils {
-    public static PunishmentBuilder createPunishmentBuilder(CommandSender sender, String[] args, PunishmentType type) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException {
+    public static PunishmentBuilder createPunishmentBuilder(CommandSource sender, String[] args, PunishmentType type) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException {
         UUID executorUUID = null;
         String executorName;
 
-        if (sender instanceof ProxiedPlayer proxiedPlayer) {
+        if (sender instanceof Player proxiedPlayer) {
             executorUUID = proxiedPlayer.getUniqueId();
-            executorName = proxiedPlayer.getName();
+            executorName = proxiedPlayer.getUsername();
         } else {
             executorName = "Console";
         }

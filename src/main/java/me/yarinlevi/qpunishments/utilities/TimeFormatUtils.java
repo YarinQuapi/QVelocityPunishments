@@ -1,8 +1,6 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import me.yarinlevi.qpunishments.exceptions.TimeNotDetectedException;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -68,9 +66,5 @@ public class TimeFormatUtils {
             c.add(Calendar.SECOND, seconds);
         }
         return c.getTimeInMillis();
-    }
-
-    public static TextComponent format(String message) {
-        return new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
     }
 }

@@ -1,5 +1,7 @@
 package me.yarinlevi.qpunishments.commands.executing;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.NotEnoughArgumentsException;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
@@ -7,20 +9,17 @@ import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 /**
  * @author YarinQuapi
  */
-public class KickCommand extends Command {
-    public KickCommand(String name, String permission, String... aliases) {
-        super(name, permission, aliases);
-    }
-
+public class KickCommand implements SimpleCommand {
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (args.length == 0) {
             sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
         } else {
@@ -42,5 +41,10 @@ public class KickCommand extends Command {
             Punishment pun = punishmentBuilder.build();
             pun.execute();
         }
+    }
+
+    @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.commands.kick");
     }
 }

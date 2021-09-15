@@ -1,26 +1,24 @@
 package me.yarinlevi.qpunishments.commands;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class CommentCommand extends Command {
+public class CommentCommand implements SimpleCommand {
     Pattern pattern = Pattern.compile("([A-z0-9])\\w+");
 
-
-    public CommentCommand() {
-        super("comment", "qbungeepunishments.comments.use", "addcomment");
-    }
-
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (args.length == 0) {
             sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
         } else {
@@ -42,13 +40,13 @@ public class CommentCommand extends Command {
                         String senderUUID = null;
                         String senderName = "Console";
 
-                        if (sender instanceof ProxiedPlayer proxiedPlayer) {
+                        if (sender instanceof Player proxiedPlayer) {
                             senderUUID = proxiedPlayer.getUniqueId().toString();
-                            senderName = proxiedPlayer.getName();
+                            senderName = proxiedPlayer.getUsername();
                         }
 
 
-                        QBungeePunishments.getInstance().getMysql()
+                        QVelocityPunishments.getInstance().getMysql()
                                 .insert(String.format("INSERT INTO `proof` (`punished_uuid`, `content`, `punished_by_uuid`, `punished_by_name`, `date_added`) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
                                         uuid, sb, senderUUID, senderName, System.currentTimeMillis()));
 
@@ -64,5 +62,10 @@ public class CommentCommand extends Command {
                 sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
             }
         }
+    }
+
+    @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.command.comment");
     }
 }

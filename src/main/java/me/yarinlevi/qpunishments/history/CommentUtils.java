@@ -1,28 +1,28 @@
 package me.yarinlevi.qpunishments.history;
 
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 public class CommentUtils {
-    public static TextComponent getCommentsOfMember(String uuid, int count, boolean debug) throws PlayerNotFoundException, SQLException {
-        ResultSet resultSet = QBungeePunishments.getInstance().getMysql().get(String.format("SELECT * FROM `proof` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid));
+    public static Component getCommentsOfMember(String uuid, int count, boolean debug) throws PlayerNotFoundException, SQLException {
+        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `proof` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid));
 
         String name = MojangAccountUtils.getName(uuid);
 
         if (resultSet != null && resultSet.isBeforeFirst()) {
-            TextComponent stringBuilder = MessagesUtils.getMessage("last_comments", count, name);
+            Component stringBuilder = MessagesUtils.getMessage("last_comments", count, name);
 
             resultSet.next();
 
             do {
-                TextComponent comment;
+                Component comment;
                 if (!debug) {
                     comment = MessagesUtils.getMessageWithClickable("comment_format",
                             resultSet.getString("content"),
@@ -37,7 +37,7 @@ public class CommentUtils {
                             new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(resultSet.getLong("date_added")),
                             resultSet.getInt("id"));
                 }
-                stringBuilder.addExtra(comment);
+                stringBuilder = stringBuilder.append(comment);
             } while (resultSet.next());
 
             return stringBuilder;

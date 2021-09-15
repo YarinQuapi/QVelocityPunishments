@@ -1,16 +1,20 @@
 package me.yarinlevi.qpunishments.commands.removing;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
 
-public class UnMuteCommand extends Command {
-    public UnMuteCommand(String name, String permission, String... aliases) {
-        super(name, permission, aliases);
+public class UnMuteCommand implements SimpleCommand {
+    @Override
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
+        CommandUtils.remove(sender, args, PunishmentType.MUTE);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        CommandUtils.remove(sender, args, PunishmentType.MUTE);
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.commands.unmute");
     }
 }

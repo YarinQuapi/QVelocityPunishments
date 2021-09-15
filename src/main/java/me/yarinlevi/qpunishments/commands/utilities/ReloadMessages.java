@@ -1,16 +1,17 @@
 package me.yarinlevi.qpunishments.commands.utilities;
 
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
+import com.velocitypowered.api.command.SimpleCommand;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
-public class ReloadMessages extends Command {
-    public ReloadMessages() {
-        super("reloadmessages", "qpunishments.commands.reloadmessages");
+public class ReloadMessages implements SimpleCommand {
+
+    @Override
+    public void execute(Invocation invocation) {
+        MessagesUtils.reload();
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        MessagesUtils.reload();
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.commands.reloadmessages");
     }
 }

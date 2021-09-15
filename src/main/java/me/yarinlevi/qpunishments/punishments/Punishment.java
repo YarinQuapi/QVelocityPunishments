@@ -1,14 +1,14 @@
 package me.yarinlevi.qpunishments.punishments;
 
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import me.yarinlevi.qpunishments.utilities.Utilities;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
@@ -62,18 +62,17 @@ public class Punishment {
      */
 
     public void execute() {
-        ProxiedPlayer player;
-        if ((player = QBungeePunishments.getInstance().getProxy().getPlayer(punished_player_uuid)) != null) {
-            switch (punishmentType) {
-                case BAN -> player.disconnect(TimeFormatUtils.format("&cYou have been banned from this server\n" + reason));
-                case KICK -> player.disconnect(TimeFormatUtils.format("&cYou have been kicked from this server\n" + reason));
-                case MUTE -> player.sendMessage(TimeFormatUtils.format("&cYou have been muted!"));
-            }
+        Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
+
+        switch (punishmentType) {
+            case BAN -> player.disconnect(MessagesUtils.getMessage("you_have_been_banned"));
+            case KICK -> player.disconnect(MessagesUtils.getMessage("you_have_been_kicked"));
+            case MUTE -> player.sendMessage(MessagesUtils.getMessage("you_have_been_muted"));
         }
 
         this.addToMySQL();
 
-        if (!silent && QBungeePunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
+        if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
             try {
                 this.broadcast();
             } catch (PlayerNotFoundException e) {
@@ -83,22 +82,24 @@ public class Punishment {
     }
 
     public void broadcast() throws PlayerNotFoundException {
+        ProxyServer server = QVelocityPunishments.getInstance().getServer();
+
         switch (punishmentType) {
             case BAN -> {
                 if (duration == 0) {
-                    ProxyServer.getInstance().broadcast(MessagesUtils.getMessage("perm_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
+                    Utilities.broadcast(MessagesUtils.getMessage("perm_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
                 } else {
-                    ProxyServer.getInstance().broadcast(MessagesUtils.getMessage("temp_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                    Utilities.broadcast(MessagesUtils.getMessage("temp_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
                 }
             }
             case MUTE -> {
                 if (duration == 0) {
-                    ProxyServer.getInstance().broadcast(MessagesUtils.getMessage("perm_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
+                    Utilities.broadcast(MessagesUtils.getMessage("perm_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
                 } else {
-                    ProxyServer.getInstance().broadcast(MessagesUtils.getMessage("temp_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                    Utilities.broadcast(MessagesUtils.getMessage("temp_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
                 }
             }
-            case KICK -> ProxyServer.getInstance().broadcast(MessagesUtils.getMessage("kick", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
+            case KICK -> Utilities.broadcast(MessagesUtils.getMessage("kick", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
         }
     }
 
@@ -131,6 +132,6 @@ public class Punishment {
             );
 
         }
-        QBungeePunishments.getInstance().getMysql().insert(sql);
+        QVelocityPunishments.getInstance().getMysql().insert(sql);
     }
 }

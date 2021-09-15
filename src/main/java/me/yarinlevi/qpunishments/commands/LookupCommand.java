@@ -1,38 +1,34 @@
 package me.yarinlevi.qpunishments.commands;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.history.CommentUtils;
 import me.yarinlevi.qpunishments.history.PunishmentFormatUtils;
 import me.yarinlevi.qpunishments.history.QueryMode;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
-import me.yarinlevi.qpunishments.support.bungee.QBungeePunishments;
-import me.yarinlevi.qpunishments.support.bungee.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Pattern;
 
-public class LookupCommand extends Command implements TabExecutor {
+public class LookupCommand implements SimpleCommand {
     static Pattern numberPattern = Pattern.compile("([0-9])+");
 
-    public LookupCommand() {
-        super("lookup", "qpunishments.command.lookup");
-    }
-
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (args.length != 0) {
             QueryMode mode;
 
@@ -76,14 +72,19 @@ public class LookupCommand extends Command implements TabExecutor {
         }
     }
 
-    public void printLookup(CommandSender sender, String targetPlayer, QueryMode mode, int limit, boolean debug) {
+    @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.command.lookup");
+    }
+
+    public void printLookup(CommandSource sender, String targetPlayer, QueryMode mode, int limit, boolean debug) {
         try {
             String uuid = MojangAccountUtils.getUUID(targetPlayer);
 
-            TextComponent textComponent = new TextComponent();
+            Component textComponent = Component.empty();
             switch (mode) {
                 case ALL -> {
-                    ResultSet rs = QBungeePunishments.getInstance().getMysql().get("SELECT * FROM `playerData` WHERE `uuid`=\"" + uuid + "\"");
+                    ResultSet rs = QVelocityPunishments.getInstance().getMysql().get("SELECT * FROM `playerData` WHERE `uuid`=\"" + uuid + "\"");
                     String firstLogin = MessagesUtils.getRawString("never_logged_on");
                     String lastLogin = MessagesUtils.getRawString("never_logged_on");
 
@@ -93,50 +94,50 @@ public class LookupCommand extends Command implements TabExecutor {
                     }
 
 
-                    textComponent.addExtra(MessagesUtils.getMessage("lookup_mode_all", QBungeePunishments.getInstance().getDescription().getVersion()));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_all", QVelocityPunishments.getInstance().getVersion()));
 
-                    textComponent.addExtra(MessagesUtils.getMessage("first_login", firstLogin));
-                    textComponent.addExtra(MessagesUtils.getMessage("last_login", lastLogin));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("first_login", firstLogin));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("last_login", lastLogin));
 
-                    textComponent.addExtra(" ");
+                    textComponent = textComponent.append(Component.text(" "));
 
-                    textComponent.addExtra(CommentUtils.getCommentsOfMember(uuid, 3, false));
-                    textComponent.addExtra("\n");
-                    textComponent.addExtra(PunishmentFormatUtils.getLatestPunishmentsOfMember(uuid, 3));
+                    textComponent = textComponent.append(CommentUtils.getCommentsOfMember(uuid, 3, false));
+                    textComponent = textComponent.append(Component.text("\n"));
+                    textComponent = textComponent.append(PunishmentFormatUtils.getLatestPunishmentsOfMember(uuid, 3));
 
                     Iterator<String> namesIterator = MojangAccountUtils.getNameHistory(uuid).listIterator();
 
-                    TextComponent nameHistory = MessagesUtils.getMessage("name_history");
+                    Component nameHistory = MessagesUtils.getMessage("name_history");
 
                     while (namesIterator.hasNext()) {
-                        nameHistory.addExtra(MessagesUtils.getMessage("name_history_format", namesIterator.next()));
+                        nameHistory = nameHistory.append(MessagesUtils.getMessage("name_history_format", namesIterator.next()));
 
                         if (namesIterator.hasNext()) {
-                            nameHistory.addExtra(", ");
+                            nameHistory = nameHistory.append(Component.text(", "));
                         }
                     }
 
-                    textComponent.addExtra(nameHistory);
+                    textComponent = textComponent.append(nameHistory);
                 }
 
                 case COMMENT -> {
-                    textComponent.addExtra(MessagesUtils.getMessage("lookup_mode_specific", QBungeePunishments.getInstance().getDescription().getVersion(), "Comment"));
-                    textComponent.addExtra(CommentUtils.getCommentsOfMember(uuid, limit, debug));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Comment"));
+                    textComponent = textComponent.append(CommentUtils.getCommentsOfMember(uuid, limit, debug));
                 }
 
                 case MUTE -> {
-                    textComponent.addExtra(MessagesUtils.getMessage("lookup_mode_specific", QBungeePunishments.getInstance().getDescription().getVersion(), "Mute"));
-                    textComponent.addExtra(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.MUTE, limit));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Mute"));
+                    textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.MUTE, limit));
                 }
 
                 case BAN -> {
-                    textComponent.addExtra(MessagesUtils.getMessage("lookup_mode_specific", QBungeePunishments.getInstance().getDescription().getVersion(), "Ban"));
-                    textComponent.addExtra(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.BAN, limit));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Ban"));
+                    textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.BAN, limit));
                 }
 
                 case KICK -> {
-                    textComponent.addExtra(MessagesUtils.getMessage("lookup_mode_specific", QBungeePunishments.getInstance().getDescription().getVersion(), "Kick"));
-                    textComponent.addExtra(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.KICK, limit));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Kick"));
+                    textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.KICK, limit));
                 }
             }
 
@@ -149,6 +150,7 @@ public class LookupCommand extends Command implements TabExecutor {
         }
     }
 
+    /*
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
@@ -162,4 +164,5 @@ public class LookupCommand extends Command implements TabExecutor {
 
         return list;
     }
+     */
 }

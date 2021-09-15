@@ -1,6 +1,0 @@
-name: ${project.name}
-version: ${project.version}
-main: me.yarinlevi.qpunishments.support.bungee.QBungeePunishments
-api-version: 1.17
-author: Quapi
-description: The best modern solution for punishments
