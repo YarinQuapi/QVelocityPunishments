@@ -1,6 +1,5 @@
 package me.yarinlevi.qpunishments.commands.utilities;
 
-import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
