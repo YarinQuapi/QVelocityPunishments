@@ -28,6 +28,10 @@ import me.yarinlevi.qpunishments.utilities.Configuration;
 import me.yarinlevi.qpunishments.utilities.MySQLHandler;
 import org.bstats.velocity.Metrics;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -63,8 +67,14 @@ public final class QVelocityPunishments {
             //noinspection ResultOfMethodCallIgnored
             path.toFile().mkdir();
 
+        File file1 = new File(path.toFile(), "messages.yml");
+        File file2 = new File(path.toFile(), "config.yml");
 
-        this.config = new Configuration(path.toFile() + "/config.yml");
+        registerFile(file1, "messages.yml");
+        registerFile(file2, "config.yml");
+
+
+        this.config = new Configuration(path.toFile() + "\\config.yml");
         this.mysql = new MySQLHandler(this.config);
 
         new MessagesUtils();
@@ -97,5 +107,15 @@ public final class QVelocityPunishments {
 
         // BStats initialization
         Metrics metrics = metricsFactory.make(this, 12669);
+    }
+
+    private void registerFile(File file, String streamFileName) {
+        if (!file.exists()) {
+            try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(streamFileName)) {
+                Files.copy(in, file.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

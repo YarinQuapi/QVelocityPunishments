@@ -23,13 +23,16 @@ public class MySQLHandler {
 
         HikariDataSource dataSource = new HikariDataSource();
 
+        //com.mysql.cj.jdbc.MysqlDataSource
+        //com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+
         dataSource.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
         dataSource.addDataSourceProperty("serverName", hostName);
         dataSource.addDataSourceProperty("port", port);
         dataSource.addDataSourceProperty("databaseName", database);
         dataSource.addDataSourceProperty("user", user);
         dataSource.addDataSourceProperty("password", pass);
-        dataSource.addDataSourceProperty("useSSL", false);
+        dataSource.addDataSourceProperty("useSSL", config.getBoolean("mysql.ssl"));
         dataSource.addDataSourceProperty("autoReconnect", true);
         dataSource.addDataSourceProperty("useUnicode", true);
         dataSource.addDataSourceProperty("characterEncoding", "UTF-8");

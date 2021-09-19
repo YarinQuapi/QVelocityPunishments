@@ -19,13 +19,15 @@ public class PlayerChatListener {
     public void onPlayerChat(PlayerChatEvent event) throws SQLException {
         Player sender = event.getPlayer();
 
-        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"mute\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"mute\"",
-                sender.getUniqueId(), System.currentTimeMillis(), sender.getUniqueId()));
+        String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"mute\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"mute\" ORDER BY id DESC;",
+                event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 
-        if (rs != null && rs.next()) {
+        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+
+        if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date")) {
             String server = rs.getString("server");
 
-            if (server.equalsIgnoreCase("global") || sender.getCurrentServer().get().getServerInfo().getName().equals(server)) {
+            if ( server.equalsIgnoreCase("global") || sender.getCurrentServer().get().getServerInfo().getName().equals(server)) {
                 event.setResult(PlayerChatEvent.ChatResult.denied());
 
                 long timestamp = rs.getLong("expire_date");

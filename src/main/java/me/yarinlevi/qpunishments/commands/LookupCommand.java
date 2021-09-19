@@ -99,11 +99,31 @@ public class LookupCommand implements SimpleCommand {
                     textComponent = textComponent.append(MessagesUtils.getMessage("first_login", firstLogin));
                     textComponent = textComponent.append(MessagesUtils.getMessage("last_login", lastLogin));
 
-                    textComponent = textComponent.append(Component.text(" "));
+                    ResultSet historyResults = QVelocityPunishments.getInstance().getMysql().get("SELECT * FROM `punishments` WHERE `punished_uuid`=\"" + uuid + "\";");
+
+                    int ban = 0;
+                    int mute = 0;
+                    int kick = 0;
+
+                    while (historyResults.next()) {
+                        switch (historyResults.getString("punishment_type")) {
+                            case "mute" -> mute++;
+                            case "kick" -> kick++;
+                            case "ban" -> ban++;
+                        }
+                    }
+
+                    textComponent = textComponent.append(MessagesUtils.getMessage("history_count", ban, mute, kick));
+
+                    textComponent = textComponent.append(Component.text("\n\n"));
 
                     textComponent = textComponent.append(CommentUtils.getCommentsOfMember(uuid, 3, false));
+
                     textComponent = textComponent.append(Component.text("\n"));
+
                     textComponent = textComponent.append(PunishmentFormatUtils.getLatestPunishmentsOfMember(uuid, 3));
+
+                    textComponent = textComponent.append(Component.text("\n"));
 
                     Iterator<String> namesIterator = MojangAccountUtils.getNameHistory(uuid).listIterator();
 

@@ -55,7 +55,11 @@ public class PunishmentFormatUtils {
             if (timestamp != 0) {
                 formattedDate = new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(timestamp));
             } else {
-                formattedDate = "forever";
+                if (resultSet.getBoolean("bypass_expire_date")) {
+                    formattedDate = MessagesUtils.getRawString("permanent") + MessagesUtils.getRawString("removed");
+                } else {
+                    formattedDate = MessagesUtils.getRawString("permanent");
+                }
             }
 
             Component textComponent = MessagesUtils.getMessage("punishment_format",
