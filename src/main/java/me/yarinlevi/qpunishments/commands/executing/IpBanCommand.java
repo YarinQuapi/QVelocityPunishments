@@ -15,8 +15,7 @@ import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 /**
  * @author YarinQuapi
  */
-public class MuteCommand implements SimpleCommand {
-
+public class IpBanCommand implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
@@ -28,7 +27,7 @@ public class MuteCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.MUTE, false);
+                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, true);
             } catch (PlayerNotFoundException e) {
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;
@@ -38,7 +37,8 @@ public class MuteCommand implements SimpleCommand {
             } catch (ServerNotExistException e) {
                 sender.sendMessage(MessagesUtils.getMessage("server_not_found"));
                 return;
-            } catch (NotValidIpException ignored) {
+            } catch (NotValidIpException e) {
+                sender.sendMessage(MessagesUtils.getMessage("invalid_ip_address"));
                 return;
             }
 
@@ -49,6 +49,6 @@ public class MuteCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.mute");
+        return invocation.source().hasPermission("qpunishments.command.ipban");
     }
 }

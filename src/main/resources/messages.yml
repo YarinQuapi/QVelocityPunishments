@@ -13,6 +13,7 @@ command_not_found: "&cHey! we couldn't find the command you were looking for."
 staff_chat_message: "&b&lSC &7%1$s &8&l-> &r%2$s"
 removed: " &7(&aremoved&7)"
 permanent: "&bforever"
+invalid_ip_address: "&cHey! that's an invalid ip address!"
 
 # --------------- Commands --------------- #
 find_command: "&7The player &b%1$s &7is located in server &b%2$s"

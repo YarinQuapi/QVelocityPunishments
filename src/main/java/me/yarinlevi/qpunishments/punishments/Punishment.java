@@ -20,7 +20,9 @@ import java.util.UUID;
  */
 public class Punishment {
     @Getter @Setter private int id;
-    @Getter private final UUID punished_player_uuid;
+    @Getter private final boolean ipPunishment;
+    @Getter private String rawIpAddress;
+    @Getter @Nullable private UUID punished_player_uuid;
     @Getter private final PunishmentType punishmentType;
     @Getter @Nullable private final UUID punished_by_player_uuid;
     @Getter private final String punished_by_name;
@@ -30,8 +32,13 @@ public class Punishment {
     @Getter private final boolean perm;
     @Getter private final boolean silent;
 
-    public Punishment(UUID punishedPlayerUUID, PunishmentType type, @Nullable UUID punishedByPlayerUUID, String punishedByPlayerName, String server, @Nullable String reason, long duration, boolean permanent, boolean silent) {
-        this.punished_player_uuid = punishedPlayerUUID;
+    public Punishment(String punishedPlayerUUIDOrIp, PunishmentType type, @Nullable UUID punishedByPlayerUUID, String punishedByPlayerName, String server, @Nullable String reason, long duration, boolean permanent, boolean silent, boolean ipPunishment) {
+        if (ipPunishment) {
+            this.rawIpAddress = punishedPlayerUUIDOrIp;
+        } else {
+            this.punished_player_uuid = UUID.fromString(punishedPlayerUUIDOrIp);
+        }
+
         this.punishmentType = type;
         this.punished_by_player_uuid = punishedByPlayerUUID;
         this.punished_by_name = punishedByPlayerName;
@@ -40,6 +47,7 @@ public class Punishment {
         this.duration = duration;
         this.perm = permanent;
         this.silent = silent;
+        this.ipPunishment = ipPunishment;
     }
 
     /*

@@ -2,6 +2,7 @@ package me.yarinlevi.qpunishments.punishments;
 
 import lombok.Getter;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
+import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,8 @@ import java.util.UUID;
  * @author YarinQuapi
  */
 public class PunishmentBuilder {
-    private final UUID targetPlayerUUID;
+    @Nullable private UUID targetPlayerUUID;
+    @Nullable private String rawIpAddress;
     private PunishmentType type;
     @Nullable private UUID moderatorUUID = null;
     private String moderatorName;
@@ -21,9 +23,18 @@ public class PunishmentBuilder {
     private String server = "global";
     @Nullable private String reason;
     @Getter private boolean silent;
+    @Getter private boolean ipPunishment = false;
 
-    public PunishmentBuilder(UUID targetUUID) {
+    public PunishmentBuilder setTargetUUID(UUID targetUUID) {
         this.targetPlayerUUID = targetUUID;
+
+        return this;
+    }
+
+    public PunishmentBuilder setTargetIpAddress(String ipAddress) {
+        this.rawIpAddress = ipAddress;
+
+        return this;
     }
 
     /**
@@ -88,9 +99,15 @@ public class PunishmentBuilder {
         return this;
     }
 
+    public PunishmentBuilder setIpPunishment(boolean ipPunishment) {
+        this.ipPunishment = ipPunishment;
+
+        return this;
+    }
+
     public Punishment build() {
         return new Punishment(
-                targetPlayerUUID,
+                ipPunishment ? rawIpAddress : targetPlayerUUID.toString(),
                 type,
                 moderatorUUID,
                 moderatorName,
@@ -98,6 +115,7 @@ public class PunishmentBuilder {
                 reason,
                 duration,
                 permanent,
-                silent);
+                silent,
+                ipPunishment);
     }
 }

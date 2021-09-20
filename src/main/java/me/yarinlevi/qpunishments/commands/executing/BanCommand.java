@@ -3,6 +3,7 @@ package me.yarinlevi.qpunishments.commands.executing;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.NotEnoughArgumentsException;
+import me.yarinlevi.qpunishments.exceptions.NotValidIpException;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
 import me.yarinlevi.qpunishments.punishments.Punishment;
@@ -26,7 +27,7 @@ public class BanCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN);
+                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, false);
             } catch (PlayerNotFoundException e) {
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;
@@ -35,6 +36,8 @@ public class BanCommand implements SimpleCommand {
                 return;
             } catch (ServerNotExistException e) {
                 sender.sendMessage(MessagesUtils.getMessage("server_not_found"));
+                return;
+            } catch (NotValidIpException ignored) {
                 return;
             }
 

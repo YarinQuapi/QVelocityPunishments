@@ -11,10 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import me.yarinlevi.qpunishments.commands.CommentCommand;
 import me.yarinlevi.qpunishments.commands.LookupCommand;
-import me.yarinlevi.qpunishments.commands.executing.BanCommand;
-import me.yarinlevi.qpunishments.commands.executing.HistoryCommand;
-import me.yarinlevi.qpunishments.commands.executing.KickCommand;
-import me.yarinlevi.qpunishments.commands.executing.MuteCommand;
+import me.yarinlevi.qpunishments.commands.executing.*;
 import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnMuteCommand;
 import me.yarinlevi.qpunishments.commands.utilities.FindCommand;
@@ -88,6 +85,10 @@ public final class QVelocityPunishments {
         commandManager.register("kick", new KickCommand(), "qkick");
         commandManager.register("unban", new UnBanCommand(), "qunban");
         commandManager.register("unmute", new UnMuteCommand(), "qunmute");
+
+        // Ip Punishment commands
+        commandManager.register("ipban", new IpBanCommand(), "qipban", "qiptempban");
+        commandManager.register("ipmute", new IpMuteCommand(), "qipmute", "qiptempmute");
 
         // History and proof commands
         commandManager.register("comment", new CommentCommand(), "addcomment");

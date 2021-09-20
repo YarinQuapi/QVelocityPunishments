@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
+import me.yarinlevi.qpunishments.utilities.Utilities;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
  * @author YarinQuapi
  */
 public class PunishmentUtils {
-    public static PunishmentBuilder createPunishmentBuilder(CommandSource sender, String[] args, PunishmentType type) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException {
+    public static PunishmentBuilder createPunishmentBuilder(CommandSource sender, String[] args, PunishmentType type, boolean ipPunishment) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException, NotValidIpException {
         UUID executorUUID = null;
         String executorName;
 
@@ -33,7 +34,7 @@ public class PunishmentUtils {
         boolean silent = false;
         boolean perm = false;
 
-        String playerName;
+        String playerNameOrIp;
         String serverName = "global";
         String reason;
         String durationString;
@@ -46,12 +47,20 @@ public class PunishmentUtils {
             silent = true;
 
             if (args.length > 1) {
-                playerName = args[1];
+                if (ipPunishment) {
+                    if (Utilities.validIP(args[1])) {
+                        playerNameOrIp = args[1];
+                    } else {
+                        playerNameOrIp = Utilities.getIpAddress(args[1]);
+                    }
+                }
+
+                playerNameOrIp = args[1];
             } else {
                 throw new NotEnoughArgumentsException();
             }
         } else {
-            playerName = args[0];
+            playerNameOrIp = args[0];
         }
 
         // Duration construction
@@ -89,20 +98,35 @@ public class PunishmentUtils {
 
         String playerDashUUID;
 
-        try {
-            playerDashUUID = MojangAccountUtils.getUUID(playerName);
-        } catch (UUIDNotFoundException | IOException e) {
-            throw new PlayerNotFoundException();
-        }
+        if (!ipPunishment) {
+            try {
+                playerDashUUID = MojangAccountUtils.getUUID(playerNameOrIp);
 
-        return new PunishmentBuilder(UUID.fromString(playerDashUUID))
-                .setPunishmentType(type)
-                .setModeratorName(executorName)
-                .setModeratorUUID(executorUUID)
-                .setServer(serverName)
-                .setDuration(duration)
-                .setPermanent(perm)
-                .setReason(reason)
-                .setSilent(silent);
+                return new PunishmentBuilder()
+                        .setTargetUUID(UUID.fromString(playerDashUUID))
+                        .setPunishmentType(type)
+                        .setModeratorName(executorName)
+                        .setModeratorUUID(executorUUID)
+                        .setServer(serverName)
+                        .setDuration(duration)
+                        .setPermanent(perm)
+                        .setReason(reason)
+                        .setSilent(silent);
+            } catch (UUIDNotFoundException | IOException e) {
+                throw new PlayerNotFoundException();
+            }
+        } else {
+            return new PunishmentBuilder()
+                    .setTargetIpAddress(playerNameOrIp)
+                    .setIpPunishment(true)
+                    .setPunishmentType(type)
+                    .setModeratorName(executorName)
+                    .setModeratorUUID(executorUUID)
+                    .setServer(serverName)
+                    .setDuration(duration)
+                    .setPermanent(perm)
+                    .setReason(reason)
+                    .setSilent(silent);
+        }
     }
 }
