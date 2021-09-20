@@ -11,7 +11,7 @@ public class UnBanCommand implements SimpleCommand {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
-        CommandUtils.remove(sender, args, PunishmentType.BAN);
+        CommandUtils.remove(sender, args, PunishmentType.BAN, false);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package me.yarinlevi.qpunishments.commands.removing;
 
 import com.velocitypowered.api.command.CommandSource;
+import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
@@ -11,11 +12,11 @@ import me.yarinlevi.qpunishments.utilities.Utilities;
 import java.io.IOException;
 
 public class CommandUtils {
-    public static void remove(CommandSource sender, String[] args, PunishmentType type) {
+    public static void remove(CommandSource sender, String[] args, PunishmentType type, boolean ip) throws PlayerNotFoundException {
         if (args.length == 0) {
             sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
         } else {
-            String playerName;
+            String playerNameOrIp;
             boolean silent = false;
 
             if (args.length == 1) {
@@ -23,29 +24,38 @@ public class CommandUtils {
                     sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
                     return;
                 } else {
-                    playerName = args[0];
+                    playerNameOrIp = args[0];
                 }
             } else {
                 if (args[0].equalsIgnoreCase("-s")) {
                     silent = true;
-                    playerName = args[1];
+
+                    if (ip) {
+                        if (Utilities.validIP(args[1])) {
+                            playerNameOrIp = args[1];
+                        } else {
+                            playerNameOrIp = Utilities.getIpAddress(args[1]);
+                        }
+                    }
+
+                    playerNameOrIp = args[1];
                 } else {
-                    playerName = args[0];
+                    playerNameOrIp = args[0];
                 }
             }
 
             try {
-                String uuid = MojangAccountUtils.getUUID(playerName);
+                String uuid = MojangAccountUtils.getUUID(playerNameOrIp);
                 String punishment = type.getKey();
 
                 String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                         uuid, System.currentTimeMillis(), punishment, uuid, punishment);
 
                 if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
-                    sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerName, punishment));
+                    sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
 
                     if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
-                        Utilities.broadcast(MessagesUtils.getMessage("un" + type.getKey().toLowerCase(), playerName));
+                        Utilities.broadcast(MessagesUtils.getMessage("un" + type.getKey().toLowerCase(), playerNameOrIp));
                     }
 
                 } else {
