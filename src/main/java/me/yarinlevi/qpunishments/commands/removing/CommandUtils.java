@@ -44,28 +44,33 @@ public class CommandUtils {
                 }
             }
 
-            try {
-                String uuid = MojangAccountUtils.getUUID(playerNameOrIp);
-                String punishment = type.getKey();
+            String punishment = type.getKey();
 
-                String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
-                        uuid, System.currentTimeMillis(), punishment, uuid, punishment);
+            if (!ip) {
+                try {
+                    String uuid = MojangAccountUtils.getUUID(playerNameOrIp);
 
-                if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
-                    sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
+                    String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
+                            uuid, System.currentTimeMillis(), punishment, uuid, punishment);
 
-                    if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
-                        Utilities.broadcast(MessagesUtils.getMessage("un" + type.getKey().toLowerCase(), playerNameOrIp));
+                    if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                        sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
+
+                        if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
+                            Utilities.broadcast(MessagesUtils.getMessage("un" + type.getKey().toLowerCase(), playerNameOrIp));
+                        }
+
+                    } else {
+                        sender.sendMessage(MessagesUtils.getMessage("no_punishment_found"));
                     }
 
-                } else {
-                    sender.sendMessage(MessagesUtils.getMessage("no_punishment_found"));
+                } catch (UUIDNotFoundException e) {
+                    sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+            } else {
 
-            } catch (UUIDNotFoundException e) {
-                sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

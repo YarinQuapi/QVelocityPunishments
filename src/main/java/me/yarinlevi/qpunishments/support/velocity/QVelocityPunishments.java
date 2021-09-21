@@ -13,6 +13,8 @@ import me.yarinlevi.qpunishments.commands.CommentCommand;
 import me.yarinlevi.qpunishments.commands.LookupCommand;
 import me.yarinlevi.qpunishments.commands.executing.*;
 import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
+import me.yarinlevi.qpunishments.commands.removing.UnIpBanCommand;
+import me.yarinlevi.qpunishments.commands.removing.UnIpMuteCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnMuteCommand;
 import me.yarinlevi.qpunishments.commands.utilities.FindCommand;
 import me.yarinlevi.qpunishments.commands.utilities.ReloadMessages;
@@ -89,6 +91,8 @@ public final class QVelocityPunishments {
         // Ip Punishment commands
         commandManager.register("ipban", new IpBanCommand(), "qipban", "qiptempban");
         commandManager.register("ipmute", new IpMuteCommand(), "qipmute", "qiptempmute");
+        commandManager.register("unipban", new UnIpBanCommand(), "qunipban");
+        commandManager.register("unipmute", new UnIpMuteCommand(), "qunipmute");
 
         // History and proof commands
         commandManager.register("comment", new CommentCommand(), "addcomment");

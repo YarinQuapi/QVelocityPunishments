@@ -6,14 +6,14 @@ import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 
-public class UnBanCommand implements SimpleCommand {
+public class UnIpBanCommand implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
         try {
-            CommandUtils.remove(sender, args, PunishmentType.BAN, false);
+            CommandUtils.remove(sender, args, PunishmentType.BAN, true);
         } catch (PlayerNotFoundException e) {
             e.printStackTrace();
         }
@@ -21,6 +21,6 @@ public class UnBanCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.unban");
+        return invocation.source().hasPermission("qpunishments.command.unipban");
     }
 }

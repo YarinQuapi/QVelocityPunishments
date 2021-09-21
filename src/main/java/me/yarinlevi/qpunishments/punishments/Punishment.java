@@ -1,7 +1,6 @@
 package me.yarinlevi.qpunishments.punishments;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
@@ -13,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -50,36 +51,43 @@ public class Punishment {
         this.ipPunishment = ipPunishment;
     }
 
-    /*
-    public void printDebug() {
-        ProxyServer.getInstance().broadcast(new TextComponent("target player (uuid): " + punished_player_uuid.toString()));
-
-        try {
-            ProxyServer.getInstance().broadcast(new TextComponent("target player (name): " + MojangAccountUtils.getName(punished_player_uuid.toString().replaceAll("-", ""))));
-        } catch (PlayerNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        ProxyServer.getInstance().broadcast(new TextComponent("type: " +  punishmentType.key));
-        ProxyServer.getInstance().broadcast(new TextComponent("executed by (uuid): " + (punished_by_player_uuid != null ? punished_by_player_uuid.toString() : "No UUID (Console?)")));
-        ProxyServer.getInstance().broadcast(new TextComponent("executed by (name): " + punished_by_name));
-        ProxyServer.getInstance().broadcast(new TextComponent("duration: " + duration));
-        ProxyServer.getInstance().broadcast(new TextComponent("permanent: " + perm));
-        ProxyServer.getInstance().broadcast(new TextComponent("reason: " + (reason != null ? reason : "No reason given")));
-    }
-     */
-
     public void execute() {
-        Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
+        if (!ipPunishment && QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).isPresent()) {
+            Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
 
-        switch (punishmentType) {
-            case BAN -> player.disconnect(MessagesUtils.getMessage("you_have_been_banned"));
-            case KICK -> player.disconnect(MessagesUtils.getMessage("you_have_been_kicked"));
-            case MUTE -> player.sendMessage(MessagesUtils.getMessage("you_have_been_muted"));
+            switch (punishmentType) {
+                case BAN -> player.disconnect(MessagesUtils.getMessage("you_have_been_banned"));
+                case KICK -> player.disconnect(MessagesUtils.getMessage("you_have_been_kicked"));
+                case MUTE -> player.sendMessage(MessagesUtils.getMessage("you_have_been_muted"));
+            }
         }
 
-        this.addToMySQL();
+        if (ipPunishment) {
+            this.addToMySQL();
 
+            StringBuilder sqlQueue = new StringBuilder();
+
+            List<Player> executedPlayers = new ArrayList<>();
+
+            for (Player player : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.getRemoteAddress().getHostName().equals(rawIpAddress)).toList()) {
+                sqlQueue.append(this.addToExecuteQueue(player.getUniqueId()));
+
+                executedPlayers.add(player);
+            }
+
+            QVelocityPunishments.getInstance().getMysql().insert(sqlQueue.toString());
+
+            for (Player player : executedPlayers) {
+                if (player.isActive()) {
+                    switch (punishmentType) {
+                        case BAN -> player.disconnect(MessagesUtils.getMessage("you_have_been_banned"));
+                        case MUTE -> player.sendMessage(MessagesUtils.getMessage("you_have_been_muted"));
+                    }
+                }
+            }
+        } else {
+            this.addToMySQL();
+        }
         if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
             try {
                 this.broadcast();
@@ -90,42 +98,74 @@ public class Punishment {
     }
 
     public void broadcast() throws PlayerNotFoundException {
-        ProxyServer server = QVelocityPunishments.getInstance().getServer();
-
-        switch (punishmentType) {
-            case BAN -> {
-                if (duration == 0) {
-                    Utilities.broadcast(MessagesUtils.getMessage("perm_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
-                } else {
-                    Utilities.broadcast(MessagesUtils.getMessage("temp_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+        if (!ipPunishment) {
+            if (punished_player_uuid != null) {
+                switch (punishmentType) {
+                    case BAN -> {
+                        if (duration == 0) {
+                            Utilities.broadcast(MessagesUtils.getMessage("perm_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
+                        } else {
+                            Utilities.broadcast(MessagesUtils.getMessage("temp_ban", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                        }
+                    }
+                    case MUTE -> {
+                        if (duration == 0) {
+                            Utilities.broadcast(MessagesUtils.getMessage("perm_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
+                        } else {
+                            Utilities.broadcast(MessagesUtils.getMessage("temp_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                        }
+                    }
+                    case KICK -> Utilities.broadcast(MessagesUtils.getMessage("kick", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
                 }
             }
-            case MUTE -> {
-                if (duration == 0) {
-                    Utilities.broadcast(MessagesUtils.getMessage("perm_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
-                } else {
-                    Utilities.broadcast(MessagesUtils.getMessage("temp_mute", MojangAccountUtils.getName(punished_player_uuid.toString()), reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+        } else {
+            switch (punishmentType) {
+                case BAN -> {
+                    if (duration == 0) {
+                        Utilities.broadcast(MessagesUtils.getMessage("perm_ip_ban", reason));
+                    } else {
+                        Utilities.broadcast(MessagesUtils.getMessage("temp_ip_ban", reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                    }
+                }
+                case MUTE -> {
+                    if (duration == 0) {
+                        Utilities.broadcast(MessagesUtils.getMessage("perm_ip_mute", reason));
+                    } else {
+                        Utilities.broadcast(MessagesUtils.getMessage("temp_ip_mute", reason, new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(duration))));
+                    }
                 }
             }
-            case KICK -> Utilities.broadcast(MessagesUtils.getMessage("kick", MojangAccountUtils.getName(punished_player_uuid.toString()), reason));
         }
     }
 
     private void addToMySQL() {
         String sql;
         if (punishmentType != PunishmentType.KICK) {
-            sql = String.format("INSERT INTO `punishments`(`punished_uuid`, `punished_by_uuid`, `punished_by_name`, `expire_date`, `reason`, `punishment_type`, `date_added`, `server`) " +
-                            "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
-                    this.punished_player_uuid,
-                    this.punished_by_player_uuid,
-                    this.punished_by_name,
-                    this.duration,
-                    this.reason,
-                    this.punishmentType.getKey(),
-                    System.currentTimeMillis(),
-                    this.server
-            );
-
+            if (ipPunishment) {
+                sql = String.format("INSERT INTO `punishments`(`punished_uuid`, `punished_by_uuid`, `punished_by_name`, `expire_date`, `reason`, `punishment_type`, `date_added`, `server`) " +
+                                "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
+                        this.rawIpAddress,
+                        this.punished_by_player_uuid,
+                        this.punished_by_name,
+                        this.duration,
+                        this.reason,
+                        this.punishmentType.getKey(),
+                        System.currentTimeMillis(),
+                        this.server
+                );
+            } else {
+                sql = String.format("INSERT INTO `punishments`(`punished_uuid`, `punished_by_uuid`, `punished_by_name`, `expire_date`, `reason`, `punishment_type`, `date_added`, `server`) " +
+                                "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
+                        this.punished_player_uuid,
+                        this.punished_by_player_uuid,
+                        this.punished_by_name,
+                        this.duration,
+                        this.reason,
+                        this.punishmentType.getKey(),
+                        System.currentTimeMillis(),
+                        this.server
+                );
+            }
         } else {
             sql = String.format("INSERT INTO `punishments`(`punished_uuid`, `punished_by_uuid`, `punished_by_name`, `expire_date`, `reason`, `punishment_type`, `date_added`, `server`) " +
                             "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
@@ -141,5 +181,23 @@ public class Punishment {
 
         }
         QVelocityPunishments.getInstance().getMysql().insert(sql);
+    }
+
+    /**
+     * Specifically for Ip Punishments!
+     * @param uuid to add to queue
+     */
+    private String addToExecuteQueue(UUID uuid) {
+        return String.format("INSERT INTO `punishments`(`punished_uuid`, `punished_by_uuid`, `punished_by_name`, `expire_date`, `reason`, `punishment_type`, `date_added`, `server`) " +
+                        "VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
+                uuid,
+                this.punished_by_player_uuid,
+                this.punished_by_name,
+                this.duration,
+                this.reason,
+                this.punishmentType.getKey(),
+                System.currentTimeMillis(),
+                this.server
+        );
     }
 }
