@@ -2,7 +2,6 @@ package me.yarinlevi.qpunishments.punishments;
 
 import lombok.Getter;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
-import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 

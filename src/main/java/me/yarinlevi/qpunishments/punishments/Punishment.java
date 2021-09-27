@@ -8,6 +8,7 @@ import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.Utilities;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author YarinQuapi
@@ -65,17 +67,21 @@ public class Punishment {
         if (ipPunishment) {
             this.addToMySQL();
 
-            StringBuilder sqlQueue = new StringBuilder();
+            List<String> sqlQueue = new ArrayList<>();
 
             List<Player> executedPlayers = new ArrayList<>();
 
-            for (Player player : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.getRemoteAddress().getHostName().equals(rawIpAddress)).toList()) {
-                sqlQueue.append(this.addToExecuteQueue(player.getUniqueId()));
+            for (Player player : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.getRemoteAddress().getAddress().getHostAddress().equals(rawIpAddress)).collect(Collectors.toList())) {
+                sqlQueue.add(this.addToExecuteQueue(player.getUniqueId()));
 
                 executedPlayers.add(player);
             }
 
-            QVelocityPunishments.getInstance().getMysql().insert(sqlQueue.toString());
+            QVelocityPunishments.getInstance().getServer().getConsoleCommandSource().sendMessage(Component.text(sqlQueue.toString()));
+
+            if (!sqlQueue.isEmpty()) {
+                QVelocityPunishments.getInstance().getMysql().insertLarge(sqlQueue);
+            }
 
             for (Player player : executedPlayers) {
                 if (player.isActive()) {
@@ -88,6 +94,7 @@ public class Punishment {
         } else {
             this.addToMySQL();
         }
+
         if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
             try {
                 this.broadcast();
@@ -197,7 +204,6 @@ public class Punishment {
                 this.reason,
                 this.punishmentType.getKey(),
                 System.currentTimeMillis(),
-                this.server
-        );
+                this.server);
     }
 }

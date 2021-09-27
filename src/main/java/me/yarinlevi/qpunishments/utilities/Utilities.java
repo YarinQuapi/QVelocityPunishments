@@ -1,7 +1,6 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import net.kyori.adventure.text.Component;
@@ -26,7 +25,7 @@ public class Utilities {
 
     public static String getIpAddress(String playerName) throws PlayerNotFoundException {
         if (QVelocityPunishments.getInstance().getServer().getPlayer(playerName).isPresent())
-            return QVelocityPunishments.getInstance().getServer().getPlayer(playerName).get().getRemoteAddress().getHostName();
+            return QVelocityPunishments.getInstance().getServer().getPlayer(playerName).get().getRemoteAddress().getAddress().getHostAddress();
 
         ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `playerData` WHERE `name`=\"%s\" ORDER BY lastLogin DESC;",
                 playerName));

@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 public class PlayerChatListener {
-
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerChat(PlayerChatEvent event) throws SQLException {
         Player sender = event.getPlayer();

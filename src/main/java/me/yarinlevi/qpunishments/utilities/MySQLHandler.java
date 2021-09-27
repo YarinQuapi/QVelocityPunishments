@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 /**
  * @author YarinQuapi
@@ -64,6 +65,7 @@ public class MySQLHandler {
                 "`id` INT NOT NULL AUTO_INCREMENT," +
                 "`uuid` VARCHAR(40) NOT NULL," +
                 "`name` VARCHAR(16) NOT NULL," +
+                "`ip` TEXT NOT NULL," +
                 "`firstLogin` TEXT NOT NULL," +
                 "`lastLogin` TEXT NOT NULL," +
                 "PRIMARY KEY (`id`)" +
@@ -107,6 +109,22 @@ public class MySQLHandler {
     public boolean insert(String query) {
         try {
             connection.prepareStatement(query).execute();
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean insertLarge(List<String> list) {
+        try {
+            Statement statement = connection.createStatement();
+
+            for (String s : list) {
+                statement.addBatch(s);
+            }
+
+            statement.executeBatch();
             return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

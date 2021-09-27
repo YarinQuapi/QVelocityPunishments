@@ -6,6 +6,7 @@ import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
 import me.yarinlevi.qpunishments.utilities.Utilities;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -53,14 +54,20 @@ public class PunishmentUtils {
                     } else {
                         playerNameOrIp = Utilities.getIpAddress(args[1]);
                     }
-                }
-
-                playerNameOrIp = args[1];
+                } else playerNameOrIp = args[1];
             } else {
                 throw new NotEnoughArgumentsException();
             }
         } else {
-            playerNameOrIp = args[0];
+            if (ipPunishment) {
+                if (Utilities.validIP(args[0])) {
+                    playerNameOrIp = args[0];
+                    Utilities.broadcast(Component.text("Ip valid: " + args[0]));
+                } else {
+                    playerNameOrIp = Utilities.getIpAddress(args[0]);
+                    Utilities.broadcast(Component.text("Ip found from username: " + playerNameOrIp));
+                }
+            } else playerNameOrIp = args[0];
         }
 
         // Duration construction

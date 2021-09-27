@@ -24,7 +24,13 @@ public class CommandUtils {
                     sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
                     return;
                 } else {
-                    playerNameOrIp = args[0];
+                    if (ip) {
+                        if (Utilities.validIP(args[0])) {
+                            playerNameOrIp = args[0];
+                        } else {
+                            playerNameOrIp = Utilities.getIpAddress(args[0]);
+                        }
+                    } else playerNameOrIp = args[0];
                 }
             } else {
                 if (args[0].equalsIgnoreCase("-s")) {
@@ -36,11 +42,15 @@ public class CommandUtils {
                         } else {
                             playerNameOrIp = Utilities.getIpAddress(args[1]);
                         }
-                    }
-
-                    playerNameOrIp = args[1];
+                    } else playerNameOrIp = args[1];
                 } else {
-                    playerNameOrIp = args[0];
+                    if (ip) {
+                        if (Utilities.validIP(args[0])) {
+                            playerNameOrIp = args[0];
+                        } else {
+                            playerNameOrIp = Utilities.getIpAddress(args[0]);
+                        }
+                    } else playerNameOrIp = args[0];
                 }
             }
 
@@ -70,7 +80,19 @@ public class CommandUtils {
                     e.printStackTrace();
                 }
             } else {
+                String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
+                        playerNameOrIp, System.currentTimeMillis(), punishment, playerNameOrIp, punishment);
 
+                if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                    sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
+
+                    if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
+                        Utilities.broadcast(MessagesUtils.getMessage("unip" + type.getKey().toLowerCase()));
+                    }
+
+                } else {
+                    sender.sendMessage(MessagesUtils.getMessage("no_punishment_found"));
+                }
             }
         }
     }

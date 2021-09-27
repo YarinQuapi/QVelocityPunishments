@@ -15,13 +15,13 @@ import java.text.SimpleDateFormat;
  * @author YarinQuapi
  */
 public class PlayerConnectListener {
-
     @Subscribe(order = PostOrder.FIRST)
     public void onConnect(PostLoginEvent event) throws SQLException {
         String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"ban\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"ban\" ORDER BY id DESC;",
                 event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 
         ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+
 
         if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date") && rs.getString("server").equalsIgnoreCase("global")) {
             long timestamp = rs.getLong("expire_date");

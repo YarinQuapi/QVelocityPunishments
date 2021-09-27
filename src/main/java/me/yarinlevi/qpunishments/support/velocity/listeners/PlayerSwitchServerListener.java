@@ -1,8 +1,6 @@
 package me.yarinlevi.qpunishments.support.velocity.listeners;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.ServerConnectedEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
@@ -14,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.NoSuchElementException;
 
 public class PlayerSwitchServerListener {
-
     @Subscribe
     public void onSwitchServer(ServerPreConnectEvent event) throws SQLException {
         if (event.getPlayer().isActive()) {

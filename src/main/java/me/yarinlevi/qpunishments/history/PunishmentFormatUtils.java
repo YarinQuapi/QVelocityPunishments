@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 
 public class PunishmentFormatUtils {
     public static Component getLatestPunishmentsOfMember(String uuid, int count) throws PlayerNotFoundException, SQLException {
-        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid));
+        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count + ";", uuid));
 
         String name = MojangAccountUtils.getName(uuid);
 
@@ -53,7 +53,12 @@ public class PunishmentFormatUtils {
 
             String formattedDate;
             if (timestamp != 0) {
-                formattedDate = new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(timestamp));
+                if (resultSet.getBoolean("bypass_expire_date")) {
+                    formattedDate = new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(timestamp)) + MessagesUtils.getRawString("removed");
+                } else {
+                    formattedDate = new SimpleDateFormat(MessagesUtils.getRawString("date_format")).format(new Date(timestamp));
+
+                }
             } else {
                 if (resultSet.getBoolean("bypass_expire_date")) {
                     formattedDate = MessagesUtils.getRawString("permanent") + MessagesUtils.getRawString("removed");

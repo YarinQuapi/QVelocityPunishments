@@ -105,11 +105,13 @@ public class LookupCommand implements SimpleCommand {
                     int mute = 0;
                     int kick = 0;
 
-                    while (historyResults.next()) {
-                        switch (historyResults.getString("punishment_type")) {
-                            case "mute" -> mute++;
-                            case "kick" -> kick++;
-                            case "ban" -> ban++;
+                    if (historyResults != null) {
+                        while (historyResults.next()) {
+                            switch (historyResults.getString("punishment_type")) {
+                                case "mute" -> mute++;
+                                case "kick" -> kick++;
+                                case "ban" -> ban++;
+                            }
                         }
                     }
 

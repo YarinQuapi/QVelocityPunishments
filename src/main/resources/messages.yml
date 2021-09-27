@@ -32,6 +32,8 @@ temp_ip_mute: "&e<Hidden Ip> &cwas temporarily muted for &a%1$s &cuntil &e%2$s"
 kick: "&e%1$s &cwas kicked for &a%1$s"
 unban: "&b%1$s &7was unbanned!"
 unmute: "&b%1$s &7was unmuted!"
+unipban: "&b<Hidden Ip> &7was unbanned!"
+unipmute: "&b<Hidden Ip> &7was unmuted!"
 
 # --------------- General Messages --------------- #
 lookup_mode_all: "&7--------- &bLookup &7v&a%1$s &7---------\n"

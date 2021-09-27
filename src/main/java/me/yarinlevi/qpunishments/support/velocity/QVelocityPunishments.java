@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * @author YarinQuapi
  */
-@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1-Velocity",
+@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.2A-PrivateVelocity",
         description = "An all-in-one punishment system for Minecraft proxies", authors = {"Quapi"})
 public final class QVelocityPunishments {
     @Getter private final ProxyServer server;
@@ -45,7 +45,7 @@ public final class QVelocityPunishments {
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
-    @Getter private final String version = "0.1-Velocity";
+    @Getter private final String version = "0.1.2A-Velocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
     @Getter private Configuration config;
@@ -111,7 +111,7 @@ public final class QVelocityPunishments {
 
 
         // BStats initialization
-        Metrics metrics = metricsFactory.make(this, 12669);
+        Metrics metrics = metricsFactory.make(this, 12866);
     }
 
     private void registerFile(File file, String streamFileName) {
