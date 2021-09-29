@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 
 public class CommentUtils {
     public static Component getCommentsOfMember(String uuid, int count, boolean debug) throws PlayerNotFoundException, SQLException {
-        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `proof` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid));
+        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `comments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid));
 
         String name = MojangAccountUtils.getName(uuid);
 

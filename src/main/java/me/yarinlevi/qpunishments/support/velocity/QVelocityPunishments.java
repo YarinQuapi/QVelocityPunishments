@@ -16,9 +16,6 @@ import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpMuteCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnMuteCommand;
-import me.yarinlevi.qpunishments.commands.utilities.FindCommand;
-import me.yarinlevi.qpunishments.commands.utilities.ReloadMessages;
-import me.yarinlevi.qpunishments.commands.utilities.StaffChatCommand;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerChatListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerConnectListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerListener;
@@ -45,7 +42,7 @@ public final class QVelocityPunishments {
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
-    @Getter private final String version = "0.1.2A-Velocity";
+    @Getter private final String version = "0.1.2A-PrivateVelocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
     @Getter private Configuration config;
@@ -98,11 +95,6 @@ public final class QVelocityPunishments {
         commandManager.register("comment", new CommentCommand(), "addcomment");
         commandManager.register("lookup", new LookupCommand());
         commandManager.register("history", new HistoryCommand(), "ha", "historyadmin");
-
-        // Utility commands
-        commandManager.register("find", new FindCommand(), "locate");
-        commandManager.register("reloadmessages", new ReloadMessages());
-        commandManager.register("staffchat", new StaffChatCommand(), "sc");
 
         // Listeners for ban and chat control
         eventManager.register(this, new PlayerConnectListener());

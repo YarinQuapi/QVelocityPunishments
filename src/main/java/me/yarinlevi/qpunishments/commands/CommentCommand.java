@@ -47,7 +47,7 @@ public class CommentCommand implements SimpleCommand {
 
 
                         QVelocityPunishments.getInstance().getMysql()
-                                .insert(String.format("INSERT INTO `proof` (`punished_uuid`, `content`, `punished_by_uuid`, `punished_by_name`, `date_added`) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
+                                .insert(String.format("INSERT INTO `comments` (`punished_uuid`, `content`, `punished_by_uuid`, `punished_by_name`, `date_added`) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
                                         uuid, sb, senderUUID, senderName, System.currentTimeMillis()));
 
 

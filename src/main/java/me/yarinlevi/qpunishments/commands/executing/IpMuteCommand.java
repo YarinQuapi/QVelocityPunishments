@@ -2,15 +2,14 @@ package me.yarinlevi.qpunishments.commands.executing;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import me.yarinlevi.qpunishments.exceptions.NotEnoughArgumentsException;
-import me.yarinlevi.qpunishments.exceptions.NotValidIpException;
-import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
+import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
+
+import java.sql.SQLException;
 
 /**
  * @author YarinQuapi
@@ -42,8 +41,15 @@ public class IpMuteCommand implements SimpleCommand {
                 return;
             }
 
-            Punishment pun = punishmentBuilder.build();
-            pun.execute();
+            try {
+                Punishment pun = punishmentBuilder.build();
+
+                pun.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (PlayerPunishedException e) {
+                sender.sendMessage(MessagesUtils.getMessage("player_punished"));
+            }
         }
     }
 

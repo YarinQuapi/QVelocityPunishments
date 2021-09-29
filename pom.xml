@@ -9,7 +9,7 @@
     <version>0.1.2A-PrivateVelocity</version>
     <packaging>jar</packaging>
 
-    <name>QVelocityPunishments_(IpPunishmentsBranch)</name>
+    <name>QVelocityPunishments</name>
 
     <description>A full punishment system</description>
     <properties>

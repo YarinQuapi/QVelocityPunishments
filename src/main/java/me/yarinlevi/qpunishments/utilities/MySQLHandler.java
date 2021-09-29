@@ -1,6 +1,7 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author YarinQuapi
@@ -24,8 +26,8 @@ public class MySQLHandler {
 
         HikariDataSource dataSource = new HikariDataSource();
 
-        //com.mysql.cj.jdbc.MysqlDataSource
-        //com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+        //MYSQL 8.x CONNECTOR - com.mysql.cj.jdbc.MysqlDataSource
+        //MYSQL 5.x CONNECTOR - com.mysql.jdbc.jdbc2.optional.MysqlDataSource
 
         dataSource.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
         dataSource.addDataSourceProperty("serverName", hostName);
@@ -81,6 +83,9 @@ public class MySQLHandler {
                 statement.executeUpdate(playerDataTableSQL);
                 System.out.println("Successfully connected to MySQL database!");
             }
+
+            QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> get("SELECT NOW();")).repeat(120L, TimeUnit.SECONDS);
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("Something went horribly wrong while connecting to database!");
@@ -90,7 +95,7 @@ public class MySQLHandler {
     @Nullable
     public ResultSet get(String query) {
         try {
-            return connection.prepareStatement(query).executeQuery();
+            return connection.createStatement().executeQuery(query);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -99,7 +104,7 @@ public class MySQLHandler {
 
     public int update(String query) {
         try {
-            return connection.prepareStatement(query).executeUpdate();
+            return connection.createStatement().executeUpdate(query);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -108,7 +113,7 @@ public class MySQLHandler {
 
     public boolean insert(String query) {
         try {
-            connection.prepareStatement(query).execute();
+            connection.createStatement().execute(query);
             return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

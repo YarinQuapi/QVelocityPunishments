@@ -1,10 +1,13 @@
 package me.yarinlevi.qpunishments.punishments;
 
 import lombok.Getter;
+import me.yarinlevi.qpunishments.exceptions.PlayerPunishedException;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -104,17 +107,26 @@ public class PunishmentBuilder {
         return this;
     }
 
-    public Punishment build() {
-        return new Punishment(
-                ipPunishment ? rawIpAddress : targetPlayerUUID.toString(),
-                type,
-                moderatorUUID,
-                moderatorName,
-                server,
-                reason,
-                duration,
-                permanent,
-                silent,
-                ipPunishment);
+    public Punishment build() throws SQLException, PlayerPunishedException {
+        String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"%s\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"%s\" ORDER BY id DESC;",
+                this.targetPlayerUUID, this.type, System.currentTimeMillis(), this.targetPlayerUUID, this.type);
+
+        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+
+        if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date") && rs.getString("server").equalsIgnoreCase("global")) {
+            throw new PlayerPunishedException();
+        } else {
+            return new Punishment(
+                    ipPunishment ? rawIpAddress : targetPlayerUUID.toString(),
+                    type,
+                    moderatorUUID,
+                    moderatorName,
+                    server,
+                    reason,
+                    duration,
+                    permanent,
+                    silent,
+                    ipPunishment);
+        }
     }
 }
