@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import me.yarinlevi.qpunishments.commands.CommentCommand;
 import me.yarinlevi.qpunishments.commands.LookupCommand;
+import me.yarinlevi.qpunishments.commands.administration.ReloadMessagesCommand;
 import me.yarinlevi.qpunishments.commands.executing.*;
 import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpBanCommand;
@@ -95,6 +96,8 @@ public final class QVelocityPunishments {
         commandManager.register("comment", new CommentCommand(), "addcomment");
         commandManager.register("lookup", new LookupCommand());
         commandManager.register("history", new HistoryCommand(), "ha", "historyadmin");
+
+        commandManager.register("reloadmessages", new ReloadMessagesCommand());
 
         // Listeners for ban and chat control
         eventManager.register(this, new PlayerConnectListener());
