@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 public class UnIpBanCommand implements SimpleCommand {
     @Override
@@ -15,7 +16,7 @@ public class UnIpBanCommand implements SimpleCommand {
         try {
             CommandUtils.remove(sender, args, PunishmentType.BAN, true);
         } catch (PlayerNotFoundException e) {
-            e.printStackTrace();
+            sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
         }
     }
 

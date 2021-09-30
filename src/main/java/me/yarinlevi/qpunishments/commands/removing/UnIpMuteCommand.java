@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
+import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 public class UnIpMuteCommand implements SimpleCommand {
     @Override
@@ -14,7 +15,7 @@ public class UnIpMuteCommand implements SimpleCommand {
         try {
             CommandUtils.remove(sender, args, PunishmentType.MUTE, true);
         } catch (PlayerNotFoundException e) {
-            e.printStackTrace();
+            sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
         }
     }
 
