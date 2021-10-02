@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 public class HistoryCommand implements SimpleCommand {
     Pattern numberPattern = Pattern.compile("([0-9])+");
 
+    //Todo: Completely rewrite to allow for adding commands more easily and support for multiple server-systems
+
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();

@@ -1,7 +1,9 @@
 package me.yarinlevi.qpunishments.punishments;
 
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.QPlayer;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
@@ -15,7 +17,7 @@ import java.util.UUID;
  * @author YarinQuapi
  */
 public class PunishmentUtils {
-    public static PunishmentBuilder createPunishmentBuilder(CommandSource sender, String[] args, PunishmentType type, boolean ipPunishment) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException, NotValidIpException {
+    public static PunishmentBuilder createPunishmentBuilder(QPlayer sender, String[] args, PunishmentType type, boolean ipPunishment) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException, NotValidIpException {
         UUID executorUUID = null;
         String executorName;
 

@@ -3,6 +3,8 @@ package me.yarinlevi.qpunishments.commands.removing;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
@@ -14,7 +16,7 @@ public class UnBanCommand implements SimpleCommand {
         String[] args = invocation.arguments();
 
         try {
-            CommandUtils.remove(sender, args, PunishmentType.BAN, false);
+            CommandUtils.remove((VelocityCommandSource) sender, args, PunishmentType.BAN, false);
         } catch (PlayerNotFoundException e) {
             sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
         }

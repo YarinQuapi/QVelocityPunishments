@@ -2,6 +2,9 @@ package me.yarinlevi.qpunishments.commands.executing;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import me.yarinlevi.qpunishments.common.abstraction.VelocityPlayer;
+import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
@@ -26,7 +29,7 @@ public class IpBanCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, true);
+                punishmentBuilder = PunishmentUtils.createPunishmentBuilder((VelocityPlayer) sender, args, PunishmentType.BAN, true);
             } catch (PlayerNotFoundException e) {
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;

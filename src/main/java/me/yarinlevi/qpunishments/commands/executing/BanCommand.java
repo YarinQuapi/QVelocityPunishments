@@ -2,6 +2,10 @@ package me.yarinlevi.qpunishments.commands.executing;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
+import me.yarinlevi.qpunishments.common.abstraction.VelocityPlayer;
+import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
