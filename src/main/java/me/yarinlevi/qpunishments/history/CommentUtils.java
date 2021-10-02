@@ -16,10 +16,8 @@ public class CommentUtils {
 
         String name = MojangAccountUtils.getName(uuid);
 
-        if (resultSet != null && resultSet.isBeforeFirst()) {
+        if (resultSet != null && resultSet.next()) {
             Component stringBuilder = MessagesUtils.getMessage("last_comments", count, name);
-
-            resultSet.next();
 
             do {
                 Component comment;
