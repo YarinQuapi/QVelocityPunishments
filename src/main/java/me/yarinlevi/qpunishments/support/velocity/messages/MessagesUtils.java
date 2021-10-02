@@ -2,11 +2,19 @@ package me.yarinlevi.qpunishments.support.velocity.messages;
 
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.utilities.Configuration;
-import net.kyori.adventure.text.Component;
+import me.yarinlevi.qpunishments.utilities.Utilities;
+import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.event.ClickEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MessagesUtils {
@@ -33,6 +41,7 @@ public class MessagesUtils {
         return Component.text(String.format(messages.get(key).replaceAll("&", "§"), args));
     }
 
+    /*
     public static Component getMessageWithClickable(String key, Object... args) {
         String msg = String.format(messages.get(key).replaceAll("&", "§"), args);
 
@@ -52,6 +61,19 @@ public class MessagesUtils {
         }
 
         return textComponent;
+    }
+     */
+
+    public static Component getMessageWithClickable(String msg, Object... args) {
+        Component text = Component.text(messages.get(msg).replaceAll("&", "§").formatted(args));
+
+        text = text.replaceText(TextReplacementConfig.builder().match(urlPattern)
+                .replacement((matchResult, builder) -> {
+            Component comp = Component.text(matchResult.group());
+            return comp.clickEvent(ClickEvent.openUrl(matchResult.group()));
+        }).build());
+
+        return text;
     }
 
     public static String getRawString(String key) {
