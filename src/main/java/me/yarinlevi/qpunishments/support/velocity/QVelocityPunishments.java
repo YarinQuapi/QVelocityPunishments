@@ -17,6 +17,7 @@ import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpMuteCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnMuteCommand;
+import me.yarinlevi.qpunishments.common.abstraction.player.proxy.SourceWrapper;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerChatListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerConnectListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerListener;
@@ -48,6 +49,7 @@ public final class QVelocityPunishments {
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
     @Getter private Configuration config;
+    @Getter private VelocitySourceWrapper velocitySourceWrapper;
 
     @Inject
     public QVelocityPunishments(ProxyServer server, Logger logger, @DataDirectory Path directory, Metrics.Factory metricsFactory) {
@@ -74,6 +76,8 @@ public final class QVelocityPunishments {
 
         this.config = new Configuration(path.toFile() + "\\config.yml");
         this.mysql = new MySQLHandler(this.config);
+
+        this.velocitySourceWrapper = new VelocitySourceWrapper();
 
         new MessagesUtils();
 

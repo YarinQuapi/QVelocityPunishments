@@ -1,9 +1,8 @@
 package me.yarinlevi.qpunishments.punishments;
 
 import com.velocitypowered.api.proxy.Player;
-import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
-import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
-import me.yarinlevi.qpunishments.common.abstraction.player.QPlayer;
+import me.yarinlevi.qpunishments.common.abstraction.player.proxy.AbstractSender;
+import me.yarinlevi.qpunishments.common.abstraction.player.proxy.ICommandSender;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
@@ -17,13 +16,13 @@ import java.util.UUID;
  * @author YarinQuapi
  */
 public class PunishmentUtils {
-    public static PunishmentBuilder createPunishmentBuilder(QPlayer sender, String[] args, PunishmentType type, boolean ipPunishment) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException, NotValidIpException {
+    public static PunishmentBuilder createPunishmentBuilder(ICommandSender sender, String[] args, PunishmentType type, boolean ipPunishment) throws PlayerNotFoundException, NotEnoughArgumentsException, ServerNotExistException, NotValidIpException {
         UUID executorUUID = null;
         String executorName;
 
-        if (sender instanceof Player proxiedPlayer) {
+        if (sender instanceof AbstractSender proxiedPlayer) {
             executorUUID = proxiedPlayer.getUniqueId();
-            executorName = proxiedPlayer.getUsername();
+            executorName = proxiedPlayer.getName();
         } else {
             executorName = "Console";
         }

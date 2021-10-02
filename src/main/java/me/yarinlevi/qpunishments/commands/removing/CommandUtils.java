@@ -1,7 +1,7 @@
 package me.yarinlevi.qpunishments.commands.removing;
 
 import me.yarinlevi.qpunishments.common.abstraction.command.VelocityCommandSource;
-import me.yarinlevi.qpunishments.common.abstraction.player.QCommandSource;
+import me.yarinlevi.qpunishments.common.abstraction.player.proxy.ICommandSender;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
@@ -13,7 +13,7 @@ import me.yarinlevi.qpunishments.utilities.Utilities;
 import java.io.IOException;
 
 public class CommandUtils {
-    public static void remove(VelocityCommandSource sender, String[] args, PunishmentType type, boolean ip) throws PlayerNotFoundException {
+    public static void remove(ICommandSender sender, String[] args, PunishmentType type, boolean ip) throws PlayerNotFoundException {
         if (args.length == 0) {
             sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
         } else {
