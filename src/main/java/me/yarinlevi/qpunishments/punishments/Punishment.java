@@ -53,6 +53,7 @@ public class Punishment {
         this.ipPunishment = ipPunishment;
     }
 
+    //Todo: explore possibilities on how to detect which server system is currently running to execute any punishments as this method largely depends on server information
     public void execute() {
         if (!ipPunishment && QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).isPresent()) {
             Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();

@@ -3,8 +3,8 @@ package me.yarinlevi.qpunishments.support.velocity;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
-import me.yarinlevi.qpunishments.common.abstraction.player.proxy.ICommandSender;
-import me.yarinlevi.qpunishments.common.abstraction.player.proxy.SourceWrapper;
+import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
+import me.yarinlevi.qpunishments.support.universal.commands.SourceWrapper;
 import net.kyori.adventure.text.Component;
 
 import java.util.UUID;

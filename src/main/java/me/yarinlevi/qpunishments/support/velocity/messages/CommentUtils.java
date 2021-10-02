@@ -1,4 +1,4 @@
-package me.yarinlevi.qpunishments.history;
+package me.yarinlevi.qpunishments.support.velocity.messages;
 
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;

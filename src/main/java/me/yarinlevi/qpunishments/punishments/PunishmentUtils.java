@@ -1,9 +1,8 @@
 package me.yarinlevi.qpunishments.punishments;
 
-import com.velocitypowered.api.proxy.Player;
-import me.yarinlevi.qpunishments.common.abstraction.player.proxy.AbstractSender;
-import me.yarinlevi.qpunishments.common.abstraction.player.proxy.ICommandSender;
 import me.yarinlevi.qpunishments.exceptions.*;
+import me.yarinlevi.qpunishments.support.universal.commands.AbstractSender;
+import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.TimeFormatUtils;
 import me.yarinlevi.qpunishments.utilities.Utilities;

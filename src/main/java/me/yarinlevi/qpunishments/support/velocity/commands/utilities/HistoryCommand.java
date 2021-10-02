@@ -1,4 +1,4 @@
-package me.yarinlevi.qpunishments.commands.executing;
+package me.yarinlevi.qpunishments.support.velocity.commands.utilities;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;

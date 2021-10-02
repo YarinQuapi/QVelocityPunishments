@@ -1,4 +1,4 @@
-package me.yarinlevi.qpunishments.commands.administration;
+package me.yarinlevi.qpunishments.support.velocity.commands.administration;
 
 import com.velocitypowered.api.command.RawCommand;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;

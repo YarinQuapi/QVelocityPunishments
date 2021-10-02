@@ -1,4 +1,4 @@
-package me.yarinlevi.qpunishments.common.abstraction.player.proxy;
+package me.yarinlevi.qpunishments.support.universal.commands;
 
 import net.kyori.adventure.text.Component;
 

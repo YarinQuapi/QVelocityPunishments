@@ -1,13 +1,12 @@
-package me.yarinlevi.qpunishments.commands.executing;
+package me.yarinlevi.qpunishments.support.velocity.commands.executing;
 
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import me.yarinlevi.qpunishments.common.abstraction.player.proxy.ICommandSender;
 import me.yarinlevi.qpunishments.exceptions.*;
 import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
+import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
@@ -16,7 +15,7 @@ import java.sql.SQLException;
 /**
  * @author YarinQuapi
  */
-public class KickCommand implements SimpleCommand {
+public class BanCommand implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
         ICommandSender sender = QVelocityPunishments.getInstance().getVelocitySourceWrapper().wrap(invocation.source());
@@ -28,7 +27,7 @@ public class KickCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.KICK, false);
+                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, false);
             } catch (PlayerNotFoundException e) {
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;
@@ -56,6 +55,6 @@ public class KickCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.kick");
+        return invocation.source().hasPermission("qpunishments.command.ban");
     }
 }

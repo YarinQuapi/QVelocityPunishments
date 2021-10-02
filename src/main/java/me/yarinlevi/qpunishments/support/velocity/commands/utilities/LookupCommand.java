@@ -1,11 +1,11 @@
-package me.yarinlevi.qpunishments.commands;
+package me.yarinlevi.qpunishments.support.velocity.commands.utilities;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
-import me.yarinlevi.qpunishments.history.CommentUtils;
-import me.yarinlevi.qpunishments.history.PunishmentFormatUtils;
+import me.yarinlevi.qpunishments.support.velocity.messages.CommentUtils;
+import me.yarinlevi.qpunishments.support.velocity.messages.PunishmentFormatUtils;
 import me.yarinlevi.qpunishments.history.QueryMode;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
