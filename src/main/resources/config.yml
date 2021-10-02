@@ -8,6 +8,7 @@ announcements:
     kick: true
 
 staff-chat:
+  enabled: true
   chat-char: '@'
 
 # Blocked commands while muted
