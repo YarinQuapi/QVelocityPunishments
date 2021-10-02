@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -97,13 +98,21 @@ public final class QVelocityPunishments {
         commandManager.register("lookup", new LookupCommand());
         commandManager.register("history", new HistoryCommand(), "ha", "historyadmin");
 
+        // Utilities
         commandManager.register("reloadmessages", new ReloadMessagesCommand());
 
+
         // Listeners for ban and chat control
+        PlayerChatListener chatListener = new PlayerChatListener();
+
         eventManager.register(this, new PlayerConnectListener());
-        eventManager.register(this, new PlayerChatListener());
+        eventManager.register(this, chatListener);
         eventManager.register(this, new PlayerSwitchServerListener());
 
+        if (this.getServer().getPluginManager().isLoaded("qproxyutilities-velocity")) {
+            chatListener.setQProxyUtilitiesFound(true);
+            QVelocityPunishments.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
+        }
 
         // BStats initialization
         Metrics metrics = metricsFactory.make(this, 12866);
