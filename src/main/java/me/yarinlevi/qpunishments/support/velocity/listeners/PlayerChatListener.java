@@ -4,6 +4,7 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
+import lombok.Setter;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
@@ -11,9 +12,13 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class PlayerChatListener {
+    private final boolean staffChatEnabled = QVelocityPunishments.getInstance().getConfig().getBoolean("staff-chat.enabled");
+    @Setter private boolean isQProxyUtilitiesFound = false;
+
     @Subscribe(order = PostOrder.FIRST)
     public void onPlayerChat(PlayerChatEvent event) throws SQLException {
         Player sender = event.getPlayer();
@@ -42,16 +47,18 @@ public class PlayerChatListener {
             }
         }
 
-        if (sender.hasPermission("qpunishments.commands.staffchat")) {
+        if (sender.hasPermission("qpunishments.commands.staffchat") && staffChatEnabled) {
             if (event.getMessage().startsWith(QVelocityPunishments.getInstance().getConfig().getString("staff-chat.chat-char"))) {
-                event.setResult(PlayerChatEvent.ChatResult.denied());
+                if (!isQProxyUtilitiesFound) {
+                    event.setResult(PlayerChatEvent.ChatResult.denied());
 
-                StringBuffer sb = new StringBuffer(event.getMessage());
+                    StringBuffer sb = new StringBuffer(event.getMessage());
 
-                sb.deleteCharAt(0);
+                    sb.deleteCharAt(0);
 
-                for (Player proxiedPlayer : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x ->x .hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
-                    proxiedPlayer.sendMessage(MessagesUtils.getMessage("staff_chat_message", sender.getUsername(), sb.toString()));
+                    for (Player proxiedPlayer : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
+                        proxiedPlayer.sendMessage(MessagesUtils.getMessage("staff_chat_message", sender.getUsername(), sb.toString()));
+                    }
                 }
             }
         }
