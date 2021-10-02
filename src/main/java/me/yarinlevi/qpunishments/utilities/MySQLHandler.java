@@ -53,7 +53,7 @@ public class MySQLHandler {
                 "`bypass_expire_date` BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY (`id`)" +
                 ") DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
 
-        String proofTableSQL = "CREATE TABLE IF NOT EXISTS `proof` ("
+        String proofTableSQL = "CREATE TABLE IF NOT EXISTS `comments` ("
                 + "`id` INT NOT NULL AUTO_INCREMENT,"
                 + "`punished_uuid` VARCHAR(40) NOT NULL,"
                 + "`content` varchar(255) NOT NULL,"
