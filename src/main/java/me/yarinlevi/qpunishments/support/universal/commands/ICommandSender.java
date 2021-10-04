@@ -1,5 +1,7 @@
 package me.yarinlevi.qpunishments.support.universal.commands;
 
+import com.velocitypowered.api.plugin.Plugin;
+import me.yarinlevi.qpunishments.support.universal.QPunishmentsPlugin;
 import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
@@ -15,6 +17,9 @@ public interface ICommandSender {
      * @return a friendly username for the sender
      */
     String getName();
+
+
+    QPunishmentsPlugin<?> getPlugin();
 
 
     /**

@@ -4,7 +4,7 @@ import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.Utilities;
@@ -63,10 +63,10 @@ public class RemoverCommandUtils {
                     String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                             uuid, System.currentTimeMillis(), punishment, uuid, punishment);
 
-                    if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                    if (QVelocityPunishmentsBoot.getInstance().getMysql().update(sql) >= 1) {
                         sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
 
-                        if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
+                        if (!silent && QVelocityPunishmentsBoot.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
                             Utilities.broadcast(MessagesUtils.getMessage("un" + type.getKey().toLowerCase(), playerNameOrIp));
                         }
 
@@ -83,10 +83,10 @@ public class RemoverCommandUtils {
                 String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                         playerNameOrIp, System.currentTimeMillis(), punishment, playerNameOrIp, punishment);
 
-                if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                if (QVelocityPunishmentsBoot.getInstance().getMysql().update(sql) >= 1) {
                     sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
 
-                    if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
+                    if (!silent && QVelocityPunishmentsBoot.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
                         Utilities.broadcast(MessagesUtils.getMessage("unip" + type.getKey().toLowerCase()));
                     }
 

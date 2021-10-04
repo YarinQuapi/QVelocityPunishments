@@ -8,7 +8,7 @@ import me.yarinlevi.qpunishments.support.velocity.messages.CommentUtils;
 import me.yarinlevi.qpunishments.support.velocity.messages.PunishmentFormatUtils;
 import me.yarinlevi.qpunishments.history.QueryMode;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import net.kyori.adventure.text.Component;
@@ -84,7 +84,7 @@ public class LookupCommand implements SimpleCommand {
             Component textComponent = Component.empty();
             switch (mode) {
                 case ALL -> {
-                    ResultSet rs = QVelocityPunishments.getInstance().getMysql().get("SELECT * FROM `playerData` WHERE `uuid`=\"" + uuid + "\"");
+                    ResultSet rs = QVelocityPunishmentsBoot.getInstance().getMysql().get("SELECT * FROM `playerData` WHERE `uuid`=\"" + uuid + "\"");
                     String firstLogin = MessagesUtils.getRawString("never_logged_on");
                     String lastLogin = MessagesUtils.getRawString("never_logged_on");
 
@@ -94,12 +94,12 @@ public class LookupCommand implements SimpleCommand {
                     }
 
 
-                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_all", QVelocityPunishments.getInstance().getVersion()));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_all", QVelocityPunishmentsBoot.getInstance().getVersion()));
 
                     textComponent = textComponent.append(MessagesUtils.getMessage("first_login", firstLogin));
                     textComponent = textComponent.append(MessagesUtils.getMessage("last_login", lastLogin));
 
-                    ResultSet historyResults = QVelocityPunishments.getInstance().getMysql().get("SELECT * FROM `punishments` WHERE `punished_uuid`=\"" + uuid + "\";");
+                    ResultSet historyResults = QVelocityPunishmentsBoot.getInstance().getMysql().get("SELECT * FROM `punishments` WHERE `punished_uuid`=\"" + uuid + "\";");
 
                     int ban = 0;
                     int mute = 0;
@@ -143,22 +143,22 @@ public class LookupCommand implements SimpleCommand {
                 }
 
                 case COMMENT -> {
-                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Comment"));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishmentsBoot.getInstance().getVersion(), "Comment"));
                     textComponent = textComponent.append(CommentUtils.getCommentsOfMember(uuid, limit, debug));
                 }
 
                 case MUTE -> {
-                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Mute"));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishmentsBoot.getInstance().getVersion(), "Mute"));
                     textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.MUTE, limit));
                 }
 
                 case BAN -> {
-                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Ban"));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishmentsBoot.getInstance().getVersion(), "Ban"));
                     textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.BAN, limit));
                 }
 
                 case KICK -> {
-                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishments.getInstance().getVersion(), "Kick"));
+                    textComponent = textComponent.append(MessagesUtils.getMessage("lookup_mode_specific", QVelocityPunishmentsBoot.getInstance().getVersion(), "Kick"));
                     textComponent = textComponent.append(PunishmentFormatUtils.getLatestSpecificPunishmentsOfMember(uuid, PunishmentType.KICK, limit));
                 }
             }

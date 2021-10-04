@@ -3,7 +3,7 @@ package me.yarinlevi.qpunishments.support.velocity.commands.utilities;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 
@@ -40,7 +40,7 @@ public class HistoryCommand implements SimpleCommand {
 
                                 String sql = "UPDATE `comment` SET `content`=\"" + sb + "\"  WHERE `id`=" + id;
 
-                                if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
+                                if (QVelocityPunishmentsBoot.getInstance().getMysql().update(sql) != 0) {
                                     sender.sendMessage(MessagesUtils.getMessage("comment_edit_successful", id));
                                 } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                             } else sender.sendMessage(MessagesUtils.getMessage("not_enough_args"));
@@ -49,7 +49,7 @@ public class HistoryCommand implements SimpleCommand {
                         case "removecomment", "rc" -> {
                             String sql = "DELETE FROM `comment` WHERE `id`=" + id;
 
-                            if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
+                            if (QVelocityPunishmentsBoot.getInstance().getMysql().update(sql) != 0) {
                                 sender.sendMessage(MessagesUtils.getMessage("comment_removal_successful", id));
                             } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                         }
@@ -57,7 +57,7 @@ public class HistoryCommand implements SimpleCommand {
                         case "removepunishment", "rp" -> {
                             String sql = "DELETE FROM `punishments` WHERE `id`=" + id;
 
-                            if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
+                            if (QVelocityPunishmentsBoot.getInstance().getMysql().update(sql) != 0) {
                                 sender.sendMessage(MessagesUtils.getMessage("punishment_removal_successful", id));
                             } else sender.sendMessage(MessagesUtils.getMessage("action_unsuccessful"));
                         }
@@ -65,7 +65,7 @@ public class HistoryCommand implements SimpleCommand {
                         case "retrievecomment", "getcomment", "gc" -> {
                             String sql = "SELECT * FROM `comment` WHERE `id`=" + id;
 
-                            ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+                            ResultSet rs = QVelocityPunishmentsBoot.getInstance().getMysql().get(sql);
 
                             try {
                                 if (rs != null && rs.next()) {

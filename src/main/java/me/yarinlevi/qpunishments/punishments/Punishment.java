@@ -4,7 +4,7 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import me.yarinlevi.qpunishments.utilities.Utilities;
@@ -55,8 +55,8 @@ public class Punishment {
 
     //Todo: explore possibilities on how to detect which server system is currently running to execute any punishments as this method largely depends on server information
     public void execute() {
-        if (!ipPunishment && QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).isPresent()) {
-            Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
+        if (!ipPunishment && QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(punished_player_uuid).isPresent()) {
+            Player player = QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
 
             switch (punishmentType) {
                 case BAN -> player.disconnect(MessagesUtils.getMessage("you_have_been_banned"));
@@ -72,16 +72,16 @@ public class Punishment {
 
             List<Player> executedPlayers = new ArrayList<>();
 
-            for (Player player : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.getRemoteAddress().getAddress().getHostAddress().equals(rawIpAddress)).collect(Collectors.toList())) {
+            for (Player player : QVelocityPunishmentsBoot.getInstance().getServer().getAllPlayers().stream().filter(x -> x.getRemoteAddress().getAddress().getHostAddress().equals(rawIpAddress)).collect(Collectors.toList())) {
                 sqlQueue.add(this.addToExecuteQueue(player.getUniqueId()));
 
                 executedPlayers.add(player);
             }
 
-            QVelocityPunishments.getInstance().getServer().getConsoleCommandSource().sendMessage(Component.text(sqlQueue.toString()));
+            QVelocityPunishmentsBoot.getInstance().getServer().getConsoleCommandSource().sendMessage(Component.text(sqlQueue.toString()));
 
             if (!sqlQueue.isEmpty()) {
-                QVelocityPunishments.getInstance().getMysql().insertLarge(sqlQueue);
+                QVelocityPunishmentsBoot.getInstance().getMysql().insertLarge(sqlQueue);
             }
 
             for (Player player : executedPlayers) {
@@ -96,7 +96,7 @@ public class Punishment {
             this.addToMySQL();
         }
 
-        if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
+        if (!silent && QVelocityPunishmentsBoot.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
             try {
                 this.broadcast();
             } catch (PlayerNotFoundException e) {
@@ -188,7 +188,7 @@ public class Punishment {
             );
 
         }
-        QVelocityPunishments.getInstance().getMysql().insert(sql);
+        QVelocityPunishmentsBoot.getInstance().getMysql().insert(sql);
     }
 
     /**

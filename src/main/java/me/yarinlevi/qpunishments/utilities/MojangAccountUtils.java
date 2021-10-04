@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,8 +31,8 @@ public class MojangAccountUtils {
      * @throws IOException Something went wrong with Mojang's servers and a connection was not possible.
      */
     public static String getUUID(String playerName) throws UUIDNotFoundException, IOException {
-        return QVelocityPunishments.getInstance().getServer().getPlayer(playerName).isPresent() ?
-                QVelocityPunishments.getInstance().getServer().getPlayer(playerName).get().getUniqueId().toString() :
+        return QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(playerName).isPresent() ?
+                QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(playerName).get().getUniqueId().toString() :
                 insertDashToUUID(getUUIDOfUsername(playerName));
     }
 

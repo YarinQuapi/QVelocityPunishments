@@ -3,7 +3,7 @@ package me.yarinlevi.qpunishments.support.velocity.listeners;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.Date;
@@ -20,7 +20,7 @@ public class PlayerConnectListener {
         String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"ban\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"ban\" ORDER BY id DESC;",
                 event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 
-        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+        ResultSet rs = QVelocityPunishmentsBoot.getInstance().getMysql().get(sql);
 
 
         if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date") && rs.getString("server").equalsIgnoreCase("global")) {
@@ -41,7 +41,7 @@ public class PlayerConnectListener {
         String ipSql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"ban\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"ban\" ORDER BY id DESC;",
                 event.getPlayer().getRemoteAddress().getAddress().getHostAddress(), System.currentTimeMillis(), event.getPlayer().getRemoteAddress().getAddress().getHostAddress());
 
-        ResultSet rsIp = QVelocityPunishments.getInstance().getMysql().get(ipSql);
+        ResultSet rsIp = QVelocityPunishmentsBoot.getInstance().getMysql().get(ipSql);
 
         if (rsIp != null && rsIp.next() && !rsIp.getBoolean("bypass_expire_date") && rsIp.getString("server").equalsIgnoreCase("global")) {
             long timestamp = rsIp.getLong("expire_date");
@@ -66,7 +66,7 @@ public class PlayerConnectListener {
                     rsIp.getString("server")
             );
 
-            QVelocityPunishments.getInstance().getMysql().insert(sql2);
+            QVelocityPunishmentsBoot.getInstance().getMysql().insert(sql2);
 
             event.getPlayer().disconnect(MessagesUtils.getMessage("you_are_banned_disconnect", reason, formattedDate));
             return;
@@ -76,7 +76,7 @@ public class PlayerConnectListener {
 
         String sql1 = String.format("SELECT * FROM playerData WHERE `uuid`=\"%s\";", event.getPlayer().getUniqueId());
 
-        ResultSet rs1 = QVelocityPunishments.getInstance().getMysql().get(sql1);
+        ResultSet rs1 = QVelocityPunishmentsBoot.getInstance().getMysql().get(sql1);
 
         if (rs1 != null && rs1.next()) {
             String sql2 = String.format("UPDATE `playerData` set `lastLogin`=\"%s\", `name`=\"%s\", `ip`=\"%s\" WHERE `uuid`=\"%s\";",
@@ -85,7 +85,7 @@ public class PlayerConnectListener {
                     event.getPlayer().getRemoteAddress().getAddress().getHostAddress(),
                     event.getPlayer().getUniqueId());
 
-            QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> QVelocityPunishments.getInstance().getMysql().update(sql2)).schedule();
+            QVelocityPunishmentsBoot.getInstance().getServer().getScheduler().buildTask(QVelocityPunishmentsBoot.getInstance(), () -> QVelocityPunishmentsBoot.getInstance().getMysql().update(sql2)).schedule();
         } else {
             String sql2 = String.format("INSERT INTO `playerData`(`uuid`, `name`, `ip`, `firstLogin`, `lastLogin`) VALUES(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");",
                     event.getPlayer().getUniqueId(),
@@ -94,7 +94,7 @@ public class PlayerConnectListener {
                     System.currentTimeMillis(),
                     System.currentTimeMillis());
 
-            QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> QVelocityPunishments.getInstance().getMysql().update(sql2)).schedule();
+            QVelocityPunishmentsBoot.getInstance().getServer().getScheduler().buildTask(QVelocityPunishmentsBoot.getInstance(), () -> QVelocityPunishmentsBoot.getInstance().getMysql().update(sql2)).schedule();
         }
     }
 }

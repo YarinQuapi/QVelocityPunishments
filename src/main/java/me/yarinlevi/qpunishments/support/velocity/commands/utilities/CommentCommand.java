@@ -4,7 +4,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 
@@ -46,7 +46,7 @@ public class CommentCommand implements SimpleCommand {
                         }
 
 
-                        QVelocityPunishments.getInstance().getMysql()
+                        QVelocityPunishmentsBoot.getInstance().getMysql()
                                 .insert(String.format("INSERT INTO `comments` (`punished_uuid`, `content`, `punished_by_uuid`, `punished_by_name`, `date_added`) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\")",
                                         uuid, sb, senderUUID, senderName, System.currentTimeMillis()));
 

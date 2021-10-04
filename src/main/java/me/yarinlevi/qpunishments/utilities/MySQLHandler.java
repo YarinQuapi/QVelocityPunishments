@@ -1,7 +1,8 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import com.zaxxer.hikari.HikariDataSource;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import lombok.Getter;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -16,8 +17,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class MySQLHandler {
     private Connection connection;
+    @Getter private static MySQLHandler instance;
+
 
     public MySQLHandler(Configuration config) {
+        instance = this;
+
         String hostName = config.getString("mysql.host");
         String database = config.getString("mysql.database");
         int port = config.getInt("mysql.port");
@@ -84,7 +89,7 @@ public class MySQLHandler {
                 System.out.println("Successfully connected to MySQL database!");
             }
 
-            QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> get("SELECT NOW();")).repeat(120L, TimeUnit.SECONDS);
+            QVelocityPunishmentsBoot.getInstance().getServer().getScheduler().buildTask(QVelocityPunishmentsBoot.getInstance(), () -> get("SELECT NOW();")).repeat(120L, TimeUnit.SECONDS);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

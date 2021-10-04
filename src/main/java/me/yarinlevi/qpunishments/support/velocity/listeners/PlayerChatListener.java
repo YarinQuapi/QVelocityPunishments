@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Setter;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.Date;
@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 public class PlayerChatListener {
-    private final boolean staffChatEnabled = QVelocityPunishments.getInstance().getConfig().getBoolean("staff-chat.enabled");
+    private final boolean staffChatEnabled = QVelocityPunishmentsBoot.getInstance().getConfig().getBoolean("staff-chat.enabled");
     @Setter private boolean isQProxyUtilitiesFound = false;
 
     @Subscribe(order = PostOrder.FIRST)
@@ -25,7 +25,7 @@ public class PlayerChatListener {
         String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"mute\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"mute\" ORDER BY id DESC;",
                 event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 
-        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+        ResultSet rs = QVelocityPunishmentsBoot.getInstance().getMysql().get(sql);
 
         if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date")) {
             String server = rs.getString("server");
@@ -47,7 +47,7 @@ public class PlayerChatListener {
         }
 
         if (sender.hasPermission("qpunishments.commands.staffchat") && staffChatEnabled) {
-            if (event.getMessage().startsWith(QVelocityPunishments.getInstance().getConfig().getString("staff-chat.chat-char"))) {
+            if (event.getMessage().startsWith(QVelocityPunishmentsBoot.getInstance().getConfig().getString("staff-chat.chat-char"))) {
                 if (!isQProxyUtilitiesFound) {
                     event.setResult(PlayerChatEvent.ChatResult.denied());
 
@@ -55,7 +55,7 @@ public class PlayerChatListener {
 
                     sb.deleteCharAt(0);
 
-                    for (Player proxiedPlayer : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
+                    for (Player proxiedPlayer : QVelocityPunishmentsBoot.getInstance().getServer().getAllPlayers().stream().filter(x -> x.hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
                         proxiedPlayer.sendMessage(MessagesUtils.getMessage("staff_chat_message", sender.getUsername(), sb.toString()));
                     }
                 }

@@ -18,6 +18,7 @@ import me.yarinlevi.qpunishments.support.velocity.commands.removing.UnMuteComman
 import me.yarinlevi.qpunishments.support.velocity.commands.utilities.CommentCommand;
 import me.yarinlevi.qpunishments.support.velocity.commands.utilities.HistoryCommand;
 import me.yarinlevi.qpunishments.support.velocity.commands.utilities.LookupCommand;
+import me.yarinlevi.qpunishments.support.velocity.general.VelocitySourceWrapper;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerChatListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerConnectListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerListener;
@@ -39,45 +40,30 @@ import java.util.logging.Logger;
  */
 @Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.2A-PrivateVelocity",
         description = "An all-in-one punishment system for Minecraft proxies", authors = {"Quapi"})
-public final class QVelocityPunishments {
+public final class QVelocityPunishmentsBoot {
     @Getter private final ProxyServer server;
     @Getter private final Logger logger;
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
     @Getter private final String version = "0.1.2A-PrivateVelocity";
-    @Getter private static QVelocityPunishments instance;
-    @Getter private MySQLHandler mysql;
-    @Getter private Configuration config;
-    @Getter private VelocitySourceWrapper velocitySourceWrapper;
+    @Getter private static QVelocityPunishmentsBoot instance;
+    @Getter private final QVPunishments<QVelocityPunishmentsBoot> plugin;
 
     @Inject
-    public QVelocityPunishments(ProxyServer server, Logger logger, @DataDirectory Path directory, Metrics.Factory metricsFactory) {
+    public QVelocityPunishmentsBoot(ProxyServer server, Logger logger, @DataDirectory Path directory, Metrics.Factory metricsFactory) {
         instance = this;
 
         this.server = server;
         this.logger = logger;
         this.path = directory;
         this.metricsFactory = metricsFactory;
+        this.plugin = new QVPunishments<>(this);
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        if (!path.toFile().exists())
-            //noinspection ResultOfMethodCallIgnored
-            path.toFile().mkdir();
-
-        File file1 = new File(path.toFile(), "messages.yml");
-        File file2 = new File(path.toFile(), "config.yml");
-
-        registerFile(file1, "messages.yml");
-        registerFile(file2, "config.yml");
-
-
-        this.config = new Configuration(path.toFile() + "\\config.yml");
-        this.mysql = new MySQLHandler(this.config);
-
-        this.velocitySourceWrapper = new VelocitySourceWrapper();
+        plugin.enable(path.toFile());
 
         new MessagesUtils();
 
@@ -115,20 +101,10 @@ public final class QVelocityPunishments {
 
         if (this.getServer().getPluginManager().isLoaded("qproxyutilities-velocity")) {
             chatListener.setQProxyUtilitiesFound(true);
-            QVelocityPunishments.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
+            QVelocityPunishmentsBoot.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
         }
 
         // BStats initialization
         Metrics metrics = metricsFactory.make(this, 12866);
-    }
-
-    private void registerFile(File file, String streamFileName) {
-        if (!file.exists()) {
-            try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(streamFileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

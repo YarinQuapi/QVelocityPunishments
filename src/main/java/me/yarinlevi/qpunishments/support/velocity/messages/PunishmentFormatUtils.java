@@ -2,8 +2,7 @@ package me.yarinlevi.qpunishments.support.velocity.messages;
 
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
-import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
 import net.kyori.adventure.text.Component;
 
@@ -14,7 +13,7 @@ import java.text.SimpleDateFormat;
 
 public class PunishmentFormatUtils {
     public static Component getLatestPunishmentsOfMember(String uuid, int count) throws PlayerNotFoundException, SQLException {
-        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count + ";", uuid));
+        ResultSet resultSet = QVelocityPunishmentsBoot.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count + ";", uuid));
 
         String name = MojangAccountUtils.getName(uuid);
 
@@ -30,7 +29,7 @@ public class PunishmentFormatUtils {
     }
 
     public static Component getLatestSpecificPunishmentsOfMember(String uuid, PunishmentType type, int count) throws PlayerNotFoundException, SQLException {
-        ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid, type.getKey().toLowerCase()));
+        ResultSet resultSet = QVelocityPunishmentsBoot.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"%s\" ORDER BY date_added DESC LIMIT " + count, uuid, type.getKey().toLowerCase()));
 
         String name = MojangAccountUtils.getName(uuid);
 

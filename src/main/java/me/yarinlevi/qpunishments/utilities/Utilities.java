@@ -2,7 +2,7 @@ package me.yarinlevi.qpunishments.utilities;
 
 import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import net.kyori.adventure.text.Component;
 
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ public class Utilities {
             .compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
 
     public static void broadcast(Component message) {
-        for (Player player : QVelocityPunishments.getInstance().getServer().getAllPlayers()) {
+        for (Player player : QVelocityPunishmentsBoot.getInstance().getServer().getAllPlayers()) {
             player.sendMessage(message);
         }
     }
@@ -24,10 +24,10 @@ public class Utilities {
     }
 
     public static String getIpAddress(String playerName) throws PlayerNotFoundException {
-        if (QVelocityPunishments.getInstance().getServer().getPlayer(playerName).isPresent())
-            return QVelocityPunishments.getInstance().getServer().getPlayer(playerName).get().getRemoteAddress().getAddress().getHostAddress();
+        if (QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(playerName).isPresent())
+            return QVelocityPunishmentsBoot.getInstance().getServer().getPlayer(playerName).get().getRemoteAddress().getAddress().getHostAddress();
 
-        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `playerData` WHERE `name`=\"%s\" ORDER BY lastLogin DESC;",
+        ResultSet rs = QVelocityPunishmentsBoot.getInstance().getMysql().get(String.format("SELECT * FROM `playerData` WHERE `name`=\"%s\" ORDER BY lastLogin DESC;",
                 playerName));
 
         try {

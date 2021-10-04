@@ -3,7 +3,11 @@ package me.yarinlevi.qpunishments.punishments;
 import lombok.Getter;
 import me.yarinlevi.qpunishments.exceptions.PlayerPunishedException;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.universal.AbstractQPunishmentsPlugin;
+import me.yarinlevi.qpunishments.support.universal.QPunishmentsPlugin;
+import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
+import me.yarinlevi.qpunishments.utilities.MySQLHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -61,8 +65,10 @@ public class PunishmentBuilder {
         return this;
     }
 
-    public PunishmentBuilder setServer(String serverName) throws ServerNotExistException {
-        if (!Objects.equals(serverName, "global") && QVelocityPunishments.getInstance().getServer().getAllServers().stream().noneMatch(x -> x.getServerInfo().getName().equals(serverName))) throw new ServerNotExistException();
+    public PunishmentBuilder setServer(String serverName, ICommandSender commandSender) throws ServerNotExistException {
+        AbstractQPunishmentsPlugin<?> plugin = (AbstractQPunishmentsPlugin<?>) commandSender.getPlugin().getPlugin();
+
+        if (!Objects.equals(serverName, "global") && !plugin.isServer(serverName)) throw new ServerNotExistException();
 
         this.server = serverName;
 
@@ -111,7 +117,7 @@ public class PunishmentBuilder {
         String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"%s\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                 this.targetPlayerUUID, this.type, System.currentTimeMillis(), this.targetPlayerUUID, this.type);
 
-        ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
+        ResultSet rs = MySQLHandler.getInstance().get(sql);
 
         if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date") && rs.getString("server").equalsIgnoreCase("global")) {
             throw new PlayerPunishedException();

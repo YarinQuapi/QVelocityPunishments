@@ -1,6 +1,6 @@
 package me.yarinlevi.qpunishments.support.velocity.messages;
 
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.utilities.Configuration;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -17,7 +17,7 @@ public class MessagesUtils {
     public MessagesUtils() {
         Configuration messagesData;
 
-        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "\\messages.yml");
+        messagesData = new Configuration(QVelocityPunishmentsBoot.getInstance().getPath().toString() + "\\messages.yml");
         messagesData.getKeys().forEach(key -> messages.put(key, messagesData.getString(key)));
     }
 
@@ -26,7 +26,7 @@ public class MessagesUtils {
 
         Configuration messagesData;
 
-        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "\\messages.yml");
+        messagesData = new Configuration(QVelocityPunishmentsBoot.getInstance().getPath().toString() + "\\messages.yml");
         messagesData.getKeys().forEach(key -> messages.put(key, messagesData.getString(key)));
     }
 

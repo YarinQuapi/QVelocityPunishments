@@ -7,7 +7,7 @@ import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
 import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ public class MuteCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        ICommandSender sender = QVelocityPunishments.getInstance().getVelocitySourceWrapper().wrap(invocation.source());
+        ICommandSender sender = QVelocityPunishmentsBoot.getInstance().getVelocitySourceWrapper().wrap(invocation.source());
         String[] args = invocation.arguments();
 
         if (args.length == 0) {

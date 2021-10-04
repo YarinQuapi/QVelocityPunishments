@@ -1,10 +1,11 @@
-package me.yarinlevi.qpunishments.support.velocity;
+package me.yarinlevi.qpunishments.support.velocity.general;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import me.yarinlevi.qpunishments.support.universal.commands.ICommandSender;
 import me.yarinlevi.qpunishments.support.universal.commands.SourceWrapper;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishmentsBoot;
 import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class VelocitySourceWrapper extends SourceWrapper<CommandSource> {
 
     @Override
     protected void performCommand(CommandSource sender, String command) {
-        QVelocityPunishments.getInstance().getServer().getCommandManager().executeAsync(sender, command);
+        QVelocityPunishmentsBoot.getInstance().getServer().getCommandManager().executeAsync(sender, command);
     }
 
     @Override
