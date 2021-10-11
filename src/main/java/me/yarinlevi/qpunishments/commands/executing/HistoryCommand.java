@@ -36,7 +36,7 @@ public class HistoryCommand implements SimpleCommand {
                                     sb.append(args[i]).append(" ");
                                 }
 
-                                String sql = "UPDATE `comment` SET `content`=\"" + sb + "\"  WHERE `id`=" + id;
+                                String sql = "UPDATE `comments` SET `content`=\"" + sb + "\"  WHERE `id`=" + id;
 
                                 if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
                                     sender.sendMessage(MessagesUtils.getMessage("comment_edit_successful", id));
@@ -45,7 +45,7 @@ public class HistoryCommand implements SimpleCommand {
                         }
 
                         case "removecomment", "rc" -> {
-                            String sql = "DELETE FROM `comment` WHERE `id`=" + id;
+                            String sql = "DELETE FROM `comments` WHERE `id`=" + id;
 
                             if (QVelocityPunishments.getInstance().getMysql().update(sql) != 0) {
                                 sender.sendMessage(MessagesUtils.getMessage("comment_removal_successful", id));
@@ -61,7 +61,7 @@ public class HistoryCommand implements SimpleCommand {
                         }
 
                         case "retrievecomment", "getcomment", "gc" -> {
-                            String sql = "SELECT * FROM `comment` WHERE `id`=" + id;
+                            String sql = "SELECT * FROM `comments` WHERE `id`=" + id;
 
                             ResultSet rs = QVelocityPunishments.getInstance().getMysql().get(sql);
 

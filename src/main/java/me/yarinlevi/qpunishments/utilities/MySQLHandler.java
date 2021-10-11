@@ -1,6 +1,7 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +17,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class MySQLHandler {
     private Connection connection;
+    @Getter private static MySQLHandler instance;
 
     public MySQLHandler(Configuration config) {
+        instance = this;
+
         String hostName = config.getString("mysql.host");
         String database = config.getString("mysql.database");
         int port = config.getInt("mysql.port");

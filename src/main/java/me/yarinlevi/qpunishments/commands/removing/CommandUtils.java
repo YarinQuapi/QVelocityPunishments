@@ -7,6 +7,7 @@ import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
+import me.yarinlevi.qpunishments.utilities.MySQLHandler;
 import me.yarinlevi.qpunishments.utilities.Utilities;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class CommandUtils {
                     String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                             uuid, System.currentTimeMillis(), punishment, uuid, punishment);
 
-                    if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                    if (MySQLHandler.getInstance().update(sql) >= 1) {
                         sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
 
                         if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {
@@ -83,7 +84,7 @@ public class CommandUtils {
                 String sql = String.format("UPDATE `punishments` SET `bypass_expire_date`=true WHERE `punished_uuid` = \"%s\" AND `expire_date` > \"%s\" AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" OR `punished_uuid` = \"%s\" AND `expire_date`=0 AND `bypass_expire_date`=false AND `punishment_type`=\"%s\" ORDER BY id DESC;",
                         playerNameOrIp, System.currentTimeMillis(), punishment, playerNameOrIp, punishment);
 
-                if (QVelocityPunishments.getInstance().getMysql().update(sql) >= 1) {
+                if (MySQLHandler.getInstance().update(sql) >= 1) {
                     sender.sendMessage(MessagesUtils.getMessage("pardon_successful", playerNameOrIp, punishment));
 
                     if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishment)) {

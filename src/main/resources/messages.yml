@@ -64,6 +64,9 @@ name_history: "&7Name History: "
 name_history_format: "&b%1$s&7"
 history_count: "&7History\n   ban: &b%1$s\n   &7mute: &b%2$s\n   &7kick: &b%3$s"
 
+lookup_ip_players_linked: "&7Linked Players: "
+lookup_ip_players_linked_format: "&b%s&7, "
+
 
 # --------------- General Admin Messages --------------- #
 action_unsuccessful: "&cSomething went wrong! perhaps id doesn't exist?"

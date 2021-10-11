@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import me.yarinlevi.qpunishments.commands.CommentCommand;
 import me.yarinlevi.qpunishments.commands.LookupCommand;
+import me.yarinlevi.qpunishments.commands.LookupIpCommand;
 import me.yarinlevi.qpunishments.commands.administration.ReloadMessagesCommand;
 import me.yarinlevi.qpunishments.commands.executing.*;
 import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
 /**
  * @author YarinQuapi
  */
-@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.2A-PrivateVelocity",
+@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.3A-PrivateVelocity",
         description = "An all-in-one punishment system for Minecraft proxies", authors = {"Quapi"})
 public final class QVelocityPunishments {
     @Getter private final ProxyServer server;
@@ -44,7 +45,7 @@ public final class QVelocityPunishments {
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
-    @Getter private final String version = "0.1.2A-PrivateVelocity";
+    @Getter private final String version = "0.1.3A-PrivateVelocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
     @Getter private Configuration config;
@@ -96,6 +97,7 @@ public final class QVelocityPunishments {
         // History and proof commands
         commandManager.register("comment", new CommentCommand(), "addcomment");
         commandManager.register("lookup", new LookupCommand());
+        commandManager.register("lookupip", new LookupIpCommand());
         commandManager.register("history", new HistoryCommand(), "ha", "historyadmin");
 
         // Utilities

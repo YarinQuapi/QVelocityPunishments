@@ -5,6 +5,7 @@ import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
+import me.yarinlevi.qpunishments.utilities.Utilities;
 import net.kyori.adventure.text.Component;
 
 import java.sql.Date;
@@ -16,7 +17,10 @@ public class PunishmentFormatUtils {
     public static Component getLatestPunishmentsOfMember(String uuid, int count) throws PlayerNotFoundException, SQLException {
         ResultSet resultSet = QVelocityPunishments.getInstance().getMysql().get(String.format("SELECT * FROM `punishments` WHERE `punished_uuid`=\"%s\" ORDER BY date_added DESC LIMIT " + count + ";", uuid));
 
-        String name = MojangAccountUtils.getName(uuid);
+        String name;
+        if (!Utilities.validIP(uuid)) {
+            name = MojangAccountUtils.getName(uuid);
+        } else name = uuid;
 
         if (resultSet != null && resultSet.next()) {
             Component stringBuilder = MessagesUtils.getMessage("last_punishments", count, name);

@@ -8,11 +8,11 @@ import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class LookupCommand implements SimpleCommand {
+public class LookupIpCommand implements SimpleCommand {
     static Pattern numberPattern = Pattern.compile("([0-9])+");
 
     @Override
-    public void execute(Invocation invocation) {
+    public void execute(SimpleCommand.Invocation invocation) {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -55,29 +55,12 @@ public class LookupCommand implements SimpleCommand {
                 mode = QueryMode.ALL;
             }
 
-            LookupShared.printLookup(sender, targetPlayer, mode, limit, debug, false);
+            LookupShared.printLookup(sender, targetPlayer, mode, limit, debug, true);
         }
     }
 
     @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.lookup");
+    public boolean hasPermission(SimpleCommand.Invocation invocation) {
+        return invocation.source().hasPermission("qpunishments.command.lookupip");
     }
-
-
-    /*
-    @Override
-    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>();
-
-        if (args.length == 1 && !args[0].equalsIgnoreCase("-debug") || args.length == 2 && args[0].equalsIgnoreCase("-debug")) {
-            list.add("comment");
-            list.add("ban");
-            list.add("mute");
-            list.add("kick");
-        }
-
-        return list;
-    }
-     */
 }
