@@ -25,3 +25,9 @@ mysql:
   user:
   pass:
   ssl: false
+
+redis:
+  enabled: false
+  host:
+  port:
+  pass:

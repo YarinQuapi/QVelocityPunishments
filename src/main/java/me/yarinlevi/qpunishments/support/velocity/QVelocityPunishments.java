@@ -24,6 +24,7 @@ import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerLi
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.Configuration;
 import me.yarinlevi.qpunishments.utilities.MySQLHandler;
+import me.yarinlevi.qpunishments.utilities.RedisHandler;
 import org.bstats.velocity.Metrics;
 
 import java.io.File;
@@ -48,6 +49,7 @@ public final class QVelocityPunishments {
     @Getter private final String version = "0.1.3A-PrivateVelocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
+    @Getter private RedisHandler redis;
     @Getter private Configuration config;
 
     @Inject
@@ -114,6 +116,14 @@ public final class QVelocityPunishments {
         if (this.getServer().getPluginManager().isLoaded("qproxyutilities-velocity")) {
             chatListener.setQProxyUtilitiesFound(true);
             QVelocityPunishments.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
+        }
+
+        if (this.config.getBoolean("redis.enabled")) {
+            try {
+                redis = new RedisHandler(this.config);
+            } catch (Exception e) {
+                System.out.println("[QRedis] Hey! looks like redis is disabled");
+            }
         }
 
         // BStats initialization

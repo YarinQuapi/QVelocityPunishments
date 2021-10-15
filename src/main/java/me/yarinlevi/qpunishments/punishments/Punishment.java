@@ -4,9 +4,11 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
+import me.yarinlevi.qpunishments.history.QueryMode;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
+import me.yarinlevi.qpunishments.utilities.RedisHandler;
 import me.yarinlevi.qpunishments.utilities.Utilities;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,7 +56,7 @@ public class Punishment {
         this.ipPunishment = ipPunishment;
     }
 
-    public void execute() {
+    public void execute(boolean fromRedis) {
         if (!ipPunishment && QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).isPresent()) {
             Player player = QVelocityPunishments.getInstance().getServer().getPlayer(punished_player_uuid).orElseThrow();
 
@@ -91,8 +94,13 @@ public class Punishment {
                     }
                 }
             }
+
         } else {
             this.addToMySQL();
+        }
+
+        if (RedisHandler.isRedis() && !fromRedis) {
+            QVelocityPunishments.getInstance().getRedis().postPunishment(this);
         }
 
         if (!silent && QVelocityPunishments.getInstance().getConfig().getBoolean("announcements.punishments." + punishmentType.getKey())) {
@@ -205,5 +213,50 @@ public class Punishment {
                 this.punishmentType.getKey(),
                 System.currentTimeMillis(),
                 this.server);
+    }
+
+    @Override
+    public String toString() {
+        String punished = ipPunishment ? "@ipPunishment=true" + "@rawIpAddress=" + rawIpAddress : "@ipPunishments=false@punished_player_uuid=" + punished_player_uuid;
+
+        return "id=" + id +
+                punished +
+                "@punishmentType=" + punishmentType +
+                "@punished_by_player_uuid=" + punished_by_player_uuid +
+                "@punished_by_name=" + punished_by_name +
+                "@server=" + server +
+                "@duration=" + duration +
+                "@reason=" + reason +
+                "@perm=" + perm +
+                "@silent=" + silent;
+    }
+
+
+    public static Punishment fromString(String query) {
+        String[] args = query.split("@");
+
+        int id = Integer.parseInt(args[0].split("id=")[1]);
+        PunishmentType type = Arrays.stream(PunishmentType.values()).filter(x -> x.getKey().toLowerCase().startsWith(args[2].split("punishmentType=")[1])).findFirst().get();
+
+        String punished_thing;
+
+        boolean ipPunishment = args[1].split("ipPunishments=")[1].equalsIgnoreCase("true");
+
+        if (ipPunishment) {
+            punished_thing = args[2].split("rawIpAddress=")[1];
+        } else {
+            punished_thing = args[2].split("punished_player_uuid=")[1];
+        }
+
+        UUID punished_by_uuid = UUID.fromString(args[4].split("punished_by_player_uuid=")[1]);
+        String punished_by_name = args[5].split("punished_by_name=")[1];
+
+        String server = args[6].split("server=")[1];
+        long duration = Long.parseLong(args[7].split("duration=")[1]);
+        String reason = args[8].split("reason=")[1];
+        boolean perm = args[9].split("perm=")[1].equalsIgnoreCase("true");
+        boolean silent = args[10].split("silent=")[1].equalsIgnoreCase("true");
+
+        return new Punishment(punished_thing, type, punished_by_uuid, punished_by_name, server, reason, duration, perm, silent, ipPunishment);
     }
 }

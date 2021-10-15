@@ -44,7 +44,7 @@ public class IpMuteCommand implements SimpleCommand {
             try {
                 Punishment pun = punishmentBuilder.build();
 
-                pun.execute();
+                pun.execute(false);
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (PlayerPunishedException e) {
