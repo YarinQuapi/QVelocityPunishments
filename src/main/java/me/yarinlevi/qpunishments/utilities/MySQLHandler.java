@@ -22,6 +22,15 @@ public class MySQLHandler {
     public MySQLHandler(Configuration config) {
         instance = this;
 
+        if (config.getString("mysql.host") == null
+                || config.getString("mysql.database") == null
+                || config.getString("mysql.port") == null
+                || config.getString("mysql.user") == null
+                || config.getString("mysql.pass") == null) {
+            System.out.println("[QMySQL] Hey! you haven't configured your mysql connection! aborting connection!");
+            return;
+        }
+
         String hostName = config.getString("mysql.host");
         String database = config.getString("mysql.database");
         int port = config.getInt("mysql.port");
@@ -80,16 +89,17 @@ public class MySQLHandler {
         System.out.println("Please await mysql hook...");
         try {
             connection = dataSource.getConnection();
+
             Statement statement = connection.createStatement();
             {
                 statement.executeUpdate(punishmentTableSQL);
                 statement.executeUpdate(proofTableSQL);
                 statement.executeUpdate(playerDataTableSQL);
+                statement.closeOnCompletion();
                 System.out.println("Successfully connected to MySQL database!");
             }
 
             QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> get("SELECT NOW();")).repeat(120L, TimeUnit.SECONDS);
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("Something went horribly wrong while connecting to database!");
@@ -134,6 +144,7 @@ public class MySQLHandler {
             }
 
             statement.executeBatch();
+            statement.closeOnCompletion();
             return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
