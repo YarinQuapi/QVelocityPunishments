@@ -117,7 +117,7 @@ public final class QVelocityPunishments {
         }
 
         // BStats initialization
-        Metrics metrics = metricsFactory.make(this, 12866);
+        metricsFactory.make(this, 12866);
     }
 
     private void registerFile(File file, String streamFileName) {

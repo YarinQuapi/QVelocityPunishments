@@ -4,7 +4,6 @@ import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
-import me.yarinlevi.qpunishments.utilities.Utilities;
 import net.kyori.adventure.text.Component;
 
 import java.sql.ResultSet;
