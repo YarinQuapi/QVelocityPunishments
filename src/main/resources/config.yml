@@ -29,5 +29,6 @@ mysql:
 redis:
   enabled: false
   host:
-  port:
+  port: 6379
   pass:
+  timeout: 30000

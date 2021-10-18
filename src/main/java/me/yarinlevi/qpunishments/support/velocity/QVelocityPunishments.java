@@ -118,12 +118,8 @@ public final class QVelocityPunishments {
             QVelocityPunishments.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
         }
 
-        if (this.config.getBoolean("redis.enabled")) {
-            try {
-                redis = new RedisHandler(this.config);
-            } catch (Exception e) {
-                System.out.println("[QRedis] Hey! looks like redis is disabled");
-            }
+        if (this.isRedis()) {
+            redis = new RedisHandler(this.config);
         }
 
         // BStats initialization
@@ -138,5 +134,9 @@ public final class QVelocityPunishments {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isRedis() {
+        return this.config.getBoolean("redis.enabled");
     }
 }

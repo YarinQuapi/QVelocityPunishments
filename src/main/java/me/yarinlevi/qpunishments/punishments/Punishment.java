@@ -15,10 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -236,7 +233,7 @@ public class Punishment {
         String[] args = query.split("@");
 
         int id = Integer.parseInt(args[0].split("id=")[1]);
-        PunishmentType type = Arrays.stream(PunishmentType.values()).filter(x -> x.getKey().toLowerCase().startsWith(args[2].split("punishmentType=")[1])).findFirst().get();
+        PunishmentType type = Arrays.stream(PunishmentType.values()).filter(x -> x.getKey().toLowerCase().startsWith(args[3].split("punishmentType=")[1].toLowerCase())).findFirst().get();
 
         String punished_thing;
 

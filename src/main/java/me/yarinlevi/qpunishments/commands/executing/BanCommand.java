@@ -7,6 +7,7 @@ import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
+import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ public class BanCommand implements SimpleCommand {
             try {
                 punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, false);
             } catch (PlayerNotFoundException e) {
+
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;
             } catch (NotEnoughArgumentsException e) {
