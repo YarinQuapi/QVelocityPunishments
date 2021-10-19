@@ -1,61 +1,69 @@
 package me.yarinlevi.qpunishments.utilities;
 
 import lombok.Getter;
+import me.yarinlevi.qpunishments.exceptions.PlayerPunishedException;
+import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
 import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 public class RedisHandler {
     @Getter private static boolean redis = false;
 
     @Getter private final Jedis jedis;
-
+    @Getter private final Set<UUID> sentIds = new HashSet<>();
 
     String hostName;
     int port;
     String pass;
 
     public RedisHandler(Configuration config) {
-        QVelocityPunishments.getInstance().getLogger().warning("0");
-
         hostName = config.getString("redis.host");
         port = config.getInt("redis.port");
         pass = config.getString("redis.pass");
-
-        QVelocityPunishments.getInstance().getLogger().warning(hostName);
-        QVelocityPunishments.getInstance().getLogger().warning(port + "");
-        QVelocityPunishments.getInstance().getLogger().warning(pass);
-
-
         redis = true;
-
 
         jedis = new Jedis(hostName, port);
         jedis.auth(pass);
         jedis.connect();
 
-
         QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), this::subscribePunishmentListener).schedule();
 
-        System.out.println("[QRedis v0.1A] enabled! please report any bugs! :D");
+        System.out.println("[QRedis v0.1B] enabled! please report any bugs! :D");
     }
 
     public void postPunishment(Punishment punishment) {
-        jedis.publish("qpunishments-" + QVelocityPunishments.getInstance().getVersion(), punishment.toString());
+        String string = punishment.toString();
+        UUID id = UUID.fromString(string.split("@")[0].split("id=")[1]);
+        this.sentIds.add(id);
+
+        jedis.publish("qpunishments-" + QVelocityPunishments.getInstance().getVersion(), string);
     }
 
     protected void subscribePunishmentListener() {
-        Jedis jsub = new Jedis(hostName, port);
-        jsub.auth(pass);
-        jsub.connect();
+        Jedis jSub = new Jedis(hostName, port);
+        jSub.auth(pass);
+        jSub.connect();
 
-        jsub.subscribe(new JedisPubSub() {
+        jSub.subscribe(new JedisPubSub() {
             @Override
             public void onMessage(String channel, String message) {
                 if (channel.equalsIgnoreCase("qpunishments-" + QVelocityPunishments.getInstance().getVersion())) {
-                    Punishment punishment = Punishment.fromString(message);
-                    punishment.execute(true);
+                    Punishment punishment;
+                    try {
+                        punishment = Punishment.fromString(message);
+
+                        if (!sentIds.contains(punishment.getRedisUUID())) {
+                            punishment.execute(true);
+                        }
+                    } catch (ServerNotExistException | PlayerPunishedException | SQLException ignored) { }
+
                 }
             }
         }, "qpunishments-" + QVelocityPunishments.getInstance().getVersion());

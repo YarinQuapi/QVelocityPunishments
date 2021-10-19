@@ -31,4 +31,3 @@ redis:
   host:
   port: 6379
   pass:
-  timeout: 30000
