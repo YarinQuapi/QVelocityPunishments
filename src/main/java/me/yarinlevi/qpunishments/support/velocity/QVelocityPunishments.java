@@ -24,6 +24,7 @@ import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerLi
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.Configuration;
 import me.yarinlevi.qpunishments.utilities.MySQLHandler;
+import me.yarinlevi.qpunishments.utilities.RedisHandler;
 import org.bstats.velocity.Metrics;
 
 import java.io.File;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * @author YarinQuapi
  */
-@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.3A-PrivateVelocity",
+@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.4B-PrivateVelocity",
         description = "An all-in-one punishment system for Minecraft proxies", authors = {"Quapi"})
 public final class QVelocityPunishments {
     @Getter private final ProxyServer server;
@@ -45,9 +46,10 @@ public final class QVelocityPunishments {
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
-    @Getter private final String version = "0.1.3A-PrivateVelocity";
+    @Getter private final String version = "0.1.4B-PrivateVelocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
+    @Getter private RedisHandler redis;
     @Getter private Configuration config;
 
     @Inject
@@ -116,6 +118,10 @@ public final class QVelocityPunishments {
             QVelocityPunishments.getInstance().getLogger().log(Level.WARNING, "QProxyUtilities found! staff chat disabled.");
         }
 
+        if (this.isRedis()) {
+            redis = new RedisHandler(this.config);
+        }
+
         // BStats initialization
         metricsFactory.make(this, 12866);
     }
@@ -128,5 +134,9 @@ public final class QVelocityPunishments {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isRedis() {
+        return this.config.getBoolean("redis.enabled");
     }
 }
