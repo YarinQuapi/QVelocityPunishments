@@ -27,6 +27,8 @@ public class LookupShared {
     private static final Pattern namePattern = Pattern.compile("[A-z0-9]\\w+");
 
     protected static void printLookup(CommandSource sender, String targetPlayer, QueryMode mode, int limit, boolean debug, boolean ip) {
+
+
         try {
             String uuidOrIp;
             if (!ip) {
@@ -63,10 +65,14 @@ public class LookupShared {
 
                         ResultSet playersLinked = MySQLHandler.getInstance().get("SELECT * FROM `playerData` WHERE `ip`=\"" + uuidOrIp + "\";");
 
+                        Component ipAddress = Component.empty();
                         Component playersLinkedComponent = MessagesUtils.getMessage("lookup_ip_players_linked");
                         Component linkedPlayer;
 
                         if (playersLinked != null && playersLinked.next()) {
+                            ipAddress = MessagesUtils.getMessage("lookup_ip_address", playersLinked.getString("ip"));
+                            ipAddress = ipAddress.append(playersLinkedComponent);
+
                             do {
                                 linkedPlayer = MessagesUtils.getMessage("lookup_ip_players_linked_format", playersLinked.getString("name"));
 
@@ -74,11 +80,11 @@ public class LookupShared {
                                 linkedPlayer = linkedPlayer.clickEvent(ClickEvent.suggestCommand(uuid));
                                 linkedPlayer = linkedPlayer.hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text("&7UUID: &b" + uuid)));
 
-                                playersLinkedComponent = playersLinkedComponent.append(linkedPlayer);
+                                ipAddress = ipAddress.append(linkedPlayer);
                             } while (playersLinked.next());
                         }
 
-                        textComponent = textComponent.append(playersLinkedComponent).append(Component.text("\n"));
+                        textComponent = textComponent.append(ipAddress).append(Component.text("\n"));
                     }
 
 

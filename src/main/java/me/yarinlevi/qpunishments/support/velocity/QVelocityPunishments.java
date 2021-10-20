@@ -60,10 +60,17 @@ public final class QVelocityPunishments {
         this.logger = logger;
         this.path = directory;
         this.metricsFactory = metricsFactory;
+
+
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        if (getJavaVersion() < 16) {
+            this.getLogger().severe("QVelocityPunishments requires Java 16+ to operate. Please upgrade your software and try again.");
+            return;
+        }
+
         if (!path.toFile().exists())
             //noinspection ResultOfMethodCallIgnored
             path.toFile().mkdir();
@@ -134,6 +141,16 @@ public final class QVelocityPunishments {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+        if(version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+            if(dot != -1) { version = version.substring(0, dot); }
+        } return Integer.parseInt(version);
     }
 
     public boolean isRedis() {

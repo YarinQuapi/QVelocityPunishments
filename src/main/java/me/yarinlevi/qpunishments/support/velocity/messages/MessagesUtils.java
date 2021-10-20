@@ -69,6 +69,10 @@ public class MessagesUtils {
         return text;
     }
 
+    public static String getRawFormattedString(String key, Object... args) {
+        return messages.getOrDefault(key, key).replaceAll("&", "§").formatted(args);
+    }
+
     public static String getRawString(String key) {
         return messages.getOrDefault(key, key).replaceAll("&", "§");
     }

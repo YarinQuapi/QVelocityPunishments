@@ -7,7 +7,6 @@ import me.yarinlevi.qpunishments.punishments.Punishment;
 import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
-import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 
 import java.sql.SQLException;

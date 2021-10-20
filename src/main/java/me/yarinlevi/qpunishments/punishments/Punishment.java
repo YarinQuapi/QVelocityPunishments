@@ -6,8 +6,6 @@ import lombok.Setter;
 import me.yarinlevi.qpunishments.exceptions.PlayerNotFoundException;
 import me.yarinlevi.qpunishments.exceptions.PlayerPunishedException;
 import me.yarinlevi.qpunishments.exceptions.ServerNotExistException;
-import me.yarinlevi.qpunishments.exceptions.UUIDNotFoundException;
-import me.yarinlevi.qpunishments.history.QueryMode;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
 import me.yarinlevi.qpunishments.utilities.MojangAccountUtils;
@@ -16,11 +14,13 @@ import me.yarinlevi.qpunishments.utilities.Utilities;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**

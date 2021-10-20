@@ -7,6 +7,7 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Setter;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.utilities.RedisHandler;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -55,8 +56,12 @@ public class PlayerChatListener {
 
                     sb.deleteCharAt(0);
 
-                    for (Player proxiedPlayer : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
-                        proxiedPlayer.sendMessage(MessagesUtils.getMessage("staff_chat_message", sender.getUsername(), sb.toString()));
+                    if (!RedisHandler.isRedis()) {
+                        for (Player proxiedPlayer : QVelocityPunishments.getInstance().getServer().getAllPlayers().stream().filter(x -> x.hasPermission("qpunishments.commands.staffchat")).collect(Collectors.toList())) {
+                            proxiedPlayer.sendMessage(MessagesUtils.getMessage("staff_chat_message", sender.getUsername(), sb.toString()));
+                        }
+                    } else {
+                        QVelocityPunishments.getInstance().getRedis().postStaffChatMessage(MessagesUtils.getRawFormattedString("staff_chat_message", sender.getUsername(), sb.toString()));
                     }
                 }
             }
