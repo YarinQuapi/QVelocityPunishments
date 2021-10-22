@@ -1,15 +1,16 @@
 # QPunishments
 QPunishments is a punishment system designed and developed by Quapi for maximum staff efficiency, offering a full all-in-one system including a built-in history and proof system.
-The system is designed and developed on top of the BungeeCord API which means it should work on most if not all BungeeCord forks.               
-There is a second version of the plugin that is designed on top of the VelocityAPI and should always work on Velocity, however updates may release with a bit delay to account for bugs that are not present on BungeeCord.
-
+The system is currently developed on top of the Velocity 3.0.x API and may get a BungeeCord version at some point in the future.
+<br><br>
+Please note that this plugin requires Velocity 3.0.0+ and MUST run on Java 16!<br>
 
 ## Features
 
-* History and Proof system for easy tracking on players
+* History and proofing system for easy tracking on players
 * A full lookup system allowing for checking a player's punishment history, comments, first and last login and his name history
 * Fully working per-server / global punishment system
-* 99% of messages customizable (System-critical messages are non-changable)
+* 99% of messages customizable (System-critical messages are non-changable currently)<br>
+* Redis & MySQL support
 
 ## Commands and usages
 ####   Command arguments explanation:
@@ -28,11 +29,18 @@ The **command** argument is crucial and may be one of the following:
 > * qpunishments.command.ban - /qban <**playerName**> [-s] [duration] [server:<**?**>] [reason]
 > * qpunishments.command.mute - /qmute <**playerName**> [-s] [duration] [server:<**?**>] [reason]
 > * qpunishments.command.kick - /qkick <**playerName**> [-s] [reason]
+> * qpunishments.command.ipban - /qipban <**playerName**> [-s] [duration] [server:<**?**>] [reason]
+> * qpunishments.command.ipmute - /qipmute <**playerName**> [-s] [duration] [server:<**?**>] [reason]
+> * qpunishments.command.unban - /qunban [-s] <**playerName**>
+> * qpunishments.command.unban - /qunipban [-s] <**playerName**>
+> * qpunishments.command.unban - /qunmute [-s] <**playerName**>
+> * qpunishments.command.unban - /qunipmute [-s] <**playerName**>
 > * qpunishments.command.lookup - /lookup [-debug] <**playerName**> [module] [limit]
+> * qpunishments.command.lookupip - /lookupip [-debug] <**playerName or IP**> [module] [limit]
 > * qpunishments.command.comment - /comment <**playerName**> <**text**>
-> * qpunishments.command.reloadmessages - /reloadmessages (Reloads all plugin messages without restarting proxy)
+> * qpunishments.admin - /reloadmessages (Reloads all plugin messages without restarting proxy)
 > * qpunishments.command.history - /historyadmin <**command**> <**id**> [<**content**>] (History management for less sql tinkering incase of mistakes)
-> * qpunishments.command.staffchat - /staffchat <**text**> (Private chat for staff)
+> * qpunishments.command.staffchat - /staffchat <**text**> (Can be replaced by a character, check config) (Private chat for staff)
 > * qpunishments.command.find - /find <**playerName**> (Locates the server a player is connected to)
 
 ## Disclaimer
