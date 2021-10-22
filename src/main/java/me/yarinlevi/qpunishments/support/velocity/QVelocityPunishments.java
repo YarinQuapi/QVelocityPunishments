@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * @author YarinQuapi
  */
-@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.4B-PrivateVelocity",
+@Plugin(id = "qvelocitypunishments", name = "QVelocityPunishments", version = "0.1.4B-PublicVelocity",
         description = "An all-in-one punishment system for Minecraft proxies", authors = {"Quapi"})
 public final class QVelocityPunishments {
     @Getter private final ProxyServer server;
@@ -46,7 +46,7 @@ public final class QVelocityPunishments {
     private final Metrics.Factory metricsFactory;
     @Getter private final Path path;
 
-    @Getter private final String version = "0.1.4B-PrivateVelocity";
+    @Getter private final String version = "0.1.4B-PublicVelocity";
     @Getter private static QVelocityPunishments instance;
     @Getter private MySQLHandler mysql;
     @Getter private RedisHandler redis;

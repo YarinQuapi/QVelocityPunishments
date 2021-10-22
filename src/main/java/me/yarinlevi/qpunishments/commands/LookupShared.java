@@ -27,8 +27,6 @@ public class LookupShared {
     private static final Pattern namePattern = Pattern.compile("[A-z0-9]\\w+");
 
     protected static void printLookup(CommandSource sender, String targetPlayer, QueryMode mode, int limit, boolean debug, boolean ip) {
-
-
         try {
             String uuidOrIp;
             if (!ip) {
