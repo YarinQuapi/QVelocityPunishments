@@ -1,7 +1,8 @@
 # QPunishments
 QPunishments is a punishment system designed and developed by Quapi for maximum staff efficiency, offering a full all-in-one system including a built-in history and proof system.
 The system is currently developed on top of the Velocity 3.0.x API and may get a BungeeCord version at some point in the future.
-
+<br><br>
+Please note that this plugin requires Velocity 3.0.0+ and MUST run on Java 16!<br>
 
 ## Features
 
