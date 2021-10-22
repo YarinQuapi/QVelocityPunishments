@@ -31,7 +31,7 @@ public class PlayerChatListener {
         if (rs != null && rs.next() && !rs.getBoolean("bypass_expire_date")) {
             String server = rs.getString("server");
 
-            if ( server.equalsIgnoreCase("global") || sender.getCurrentServer().get().getServerInfo().getName().equals(server)) {
+            if (server.equalsIgnoreCase("global") || sender.getCurrentServer().get().getServerInfo().getName().equals(server)) {
                 event.setResult(PlayerChatEvent.ChatResult.denied());
 
                 long timestamp = rs.getLong("expire_date");
