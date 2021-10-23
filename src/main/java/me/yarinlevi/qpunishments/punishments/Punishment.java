@@ -104,8 +104,6 @@ public class Punishment {
                 executedPlayers.add(player);
             }
 
-            QVelocityPunishments.getInstance().getServer().getConsoleCommandSource().sendMessage(Component.text(sqlQueue.toString()));
-
             if (!sqlQueue.isEmpty()) {
                 QVelocityPunishments.getInstance().getMysql().insertLarge(sqlQueue);
             }
