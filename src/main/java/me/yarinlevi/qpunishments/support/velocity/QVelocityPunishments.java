@@ -18,6 +18,7 @@ import me.yarinlevi.qpunishments.commands.removing.UnBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpBanCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnIpMuteCommand;
 import me.yarinlevi.qpunishments.commands.removing.UnMuteCommand;
+import me.yarinlevi.qpunishments.migrators.LiteBansMigrator;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerChatListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerConnectListener;
 import me.yarinlevi.qpunishments.support.velocity.listeners.PlayerSwitchServerListener;
@@ -60,8 +61,6 @@ public final class QVelocityPunishments {
         this.logger = logger;
         this.path = directory;
         this.metricsFactory = metricsFactory;
-
-
     }
 
     @Subscribe
@@ -84,6 +83,13 @@ public final class QVelocityPunishments {
 
         this.config = new Configuration(path.toFile() + "\\config.yml");
         this.mysql = new MySQLHandler(this.config);
+
+        File migrator = new File(path.toFile(), "migrate.yml");
+        if (migrator.exists()) {
+            this.getLogger().warning("INITIALIZING MIGRATOR...");
+            new LiteBansMigrator(new Configuration(migrator.toPath().toString()));
+            this.getLogger().warning("MIGRATION FINISHED. REBOOT IS RECOMMENDED BUT NOT REQUIRED.");
+        }
 
         new MessagesUtils();
 
