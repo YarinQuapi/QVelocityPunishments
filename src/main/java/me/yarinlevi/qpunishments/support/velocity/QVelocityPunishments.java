@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
+import lombok.Setter;
 import me.yarinlevi.qpunishments.commands.CommentCommand;
 import me.yarinlevi.qpunishments.commands.LookupCommand;
 import me.yarinlevi.qpunishments.commands.LookupIpCommand;
@@ -52,6 +53,8 @@ public final class QVelocityPunishments {
     @Getter private RedisHandler redis;
     @Getter private Configuration config;
 
+    @Getter @Setter private boolean lockdownMode = false;
+
     @Inject
     public QVelocityPunishments(ProxyServer server, Logger logger, @DataDirectory Path directory, Metrics.Factory metricsFactory) {
         instance = this;
@@ -82,7 +85,7 @@ public final class QVelocityPunishments {
         registerFile(file2, "config.yml");
 
 
-        this.config = new Configuration(path.toFile() + "\\config.yml");
+        this.config = new Configuration(path.toFile() + "/config.yml");
         this.mysql = new MySQLHandler(this.config);
 
         new MessagesUtils();

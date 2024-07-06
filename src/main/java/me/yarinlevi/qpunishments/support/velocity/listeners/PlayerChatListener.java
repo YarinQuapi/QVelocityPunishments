@@ -44,6 +44,7 @@ public class PlayerChatListener {
                 }
 
                 sender.sendMessage(MessagesUtils.getMessage("you_are_muted", formattedDate));
+                return;
             }
         }
 

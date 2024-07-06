@@ -1,7 +1,10 @@
 package me.yarinlevi.qpunishments.utilities;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import me.yarinlevi.qpunishments.exceptions.MaxConnectionsException;
 import me.yarinlevi.qpunishments.support.velocity.QVelocityPunishments;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,15 +12,23 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author YarinQuapi
  */
 public class MySQLHandler {
-    private Connection connection;
     @Getter private static MySQLHandler instance;
+    private HikariConfig connectionConfig;
+    @Nullable private HikariDataSource dataSource = null;
+    private final int maxConnections = 5;
+
+    private final List<Connection> connectionsList = new ArrayList<>();
+
+    private int connections = 0;
 
     public MySQLHandler(Configuration config) {
         instance = this;
@@ -37,21 +48,21 @@ public class MySQLHandler {
         String user = config.getString("mysql.user");
         String pass = config.getString("mysql.pass");
 
-        HikariDataSource dataSource = new HikariDataSource();
+        connectionConfig = new HikariConfig();
 
         //MYSQL 8.x CONNECTOR - com.mysql.cj.jdbc.MysqlDataSource
         //MYSQL 5.x CONNECTOR - com.mysql.jdbc.jdbc2.optional.MysqlDataSource
 
-        dataSource.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        dataSource.addDataSourceProperty("serverName", hostName);
-        dataSource.addDataSourceProperty("port", port);
-        dataSource.addDataSourceProperty("databaseName", database);
-        dataSource.addDataSourceProperty("user", user);
-        dataSource.addDataSourceProperty("password", pass);
-        dataSource.addDataSourceProperty("useSSL", config.getBoolean("mysql.ssl"));
-        dataSource.addDataSourceProperty("autoReconnect", true);
-        dataSource.addDataSourceProperty("useUnicode", true);
-        dataSource.addDataSourceProperty("characterEncoding", "UTF-8");
+        connectionConfig.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
+        connectionConfig.addDataSourceProperty("serverName", hostName);
+        connectionConfig.addDataSourceProperty("port", port);
+        connectionConfig.addDataSourceProperty("databaseName", database);
+        connectionConfig.addDataSourceProperty("user", user);
+        connectionConfig.addDataSourceProperty("password", pass);
+        connectionConfig.addDataSourceProperty("useSSL", config.getBoolean("mysql.ssl"));
+        connectionConfig.addDataSourceProperty("autoReconnect", true);
+        //dataSource.addDataSourceProperty("useUnicode", true);
+        connectionConfig.addDataSourceProperty("characterEncoding", "UTF-8");
 
         String punishmentTableSQL = "CREATE TABLE IF NOT EXISTS `punishments`(" +
                 "`id` INT NOT NULL AUTO_INCREMENT," +
@@ -86,9 +97,13 @@ public class MySQLHandler {
                 "PRIMARY KEY (`id`)" +
                 ") DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
 
+
+        dataSource = new HikariDataSource(connectionConfig);
+
         System.out.println("Please await mysql hook...");
         try {
-            connection = dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
+            connections++;
 
             Statement statement = connection.createStatement();
             {
@@ -99,17 +114,45 @@ public class MySQLHandler {
                 System.out.println("Successfully connected to MySQL database!");
             }
 
-            QVelocityPunishments.getInstance().getServer().getScheduler().buildTask(QVelocityPunishments.getInstance(), () -> get("SELECT NOW();")).repeat(120L, TimeUnit.SECONDS);
+            connection.close();
+
+            connections--;
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("Something went horribly wrong while connecting to database!");
         }
     }
 
+    @SneakyThrows
+    private Connection getConnection() {
+        if (connections >= maxConnections) throw new MaxConnectionsException("Reached max connections possible on the SQL connection");
+
+        if (dataSource != null && !dataSource.isClosed()) {
+
+            connections++;
+
+            return dataSource.getConnection();
+        } else {
+
+            dataSource = new HikariDataSource(connectionConfig);
+
+            connections++;
+
+            return dataSource.getConnection();
+        }
+    }
+
     @Nullable
     public ResultSet get(String query) {
         try {
-            return connection.createStatement().executeQuery(query);
+            Connection connection = getConnection();
+
+            ResultSet set = connection.createStatement().executeQuery(query);
+
+            connection.close();
+
+            return set;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -118,7 +161,13 @@ public class MySQLHandler {
 
     public int update(String query) {
         try {
-            return connection.createStatement().executeUpdate(query);
+            Connection connection = getConnection();
+
+            int iii = connection.createStatement().executeUpdate(query);
+
+            connection.close();
+
+            return iii;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -127,8 +176,13 @@ public class MySQLHandler {
 
     public boolean insert(String query) {
         try {
-            connection.createStatement().execute(query);
-            return true;
+            Connection connection = getConnection();
+
+            boolean insert = connection.createStatement().execute(query);
+
+            connection.close();
+
+            return insert;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -137,6 +191,7 @@ public class MySQLHandler {
 
     public boolean insertLarge(List<String> list) {
         try {
+            Connection connection = getConnection();
             Statement statement = connection.createStatement();
 
             for (String s : list) {
@@ -145,6 +200,7 @@ public class MySQLHandler {
 
             statement.executeBatch();
             statement.closeOnCompletion();
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

@@ -17,7 +17,7 @@ public class MessagesUtils {
     public MessagesUtils() {
         Configuration messagesData;
 
-        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "\\messages.yml");
+        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "/messages.yml");
         messagesData.getKeys().forEach(key -> messages.put(key, messagesData.getString(key)));
     }
 
@@ -26,7 +26,7 @@ public class MessagesUtils {
 
         Configuration messagesData;
 
-        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "\\messages.yml");
+        messagesData = new Configuration(QVelocityPunishments.getInstance().getPath().toString() + "/messages.yml");
         messagesData.getKeys().forEach(key -> messages.put(key, messagesData.getString(key)));
     }
 

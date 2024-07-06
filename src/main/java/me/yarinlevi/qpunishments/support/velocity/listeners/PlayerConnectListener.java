@@ -17,6 +17,11 @@ import java.text.SimpleDateFormat;
 public class PlayerConnectListener {
     @Subscribe(order = PostOrder.FIRST)
     public void onConnect(PostLoginEvent event) throws SQLException {
+        if (QVelocityPunishments.getInstance().isLockdownMode()) {
+            event.getPlayer().disconnect(MessagesUtils.getMessage("lcokdown"));
+            return;
+        }
+
         String sql = String.format("SELECT * FROM punishments WHERE `punished_uuid`=\"%s\" AND `punishment_type`=\"ban\" AND `expire_date` > \"%s\" OR `punished_uuid`=\"%s\" AND `expire_date`=0 AND `punishment_type`=\"ban\" ORDER BY id DESC;",
                 event.getPlayer().getUniqueId().toString(), System.currentTimeMillis(), event.getPlayer().getUniqueId().toString());
 

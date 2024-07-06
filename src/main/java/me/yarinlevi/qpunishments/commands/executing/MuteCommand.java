@@ -8,6 +8,7 @@ import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.utilities.Utilities;
 
 import java.sql.SQLException;
 
@@ -27,7 +28,11 @@ public class MuteCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.MUTE, false);
+                if (Utilities.validIP(args[1])) {
+                    punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.MUTE, true);
+                } else {
+                    punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.MUTE, false);
+                }
             } catch (PlayerNotFoundException e) {
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;

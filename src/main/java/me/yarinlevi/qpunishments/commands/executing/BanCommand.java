@@ -8,6 +8,7 @@ import me.yarinlevi.qpunishments.punishments.PunishmentBuilder;
 import me.yarinlevi.qpunishments.punishments.PunishmentType;
 import me.yarinlevi.qpunishments.punishments.PunishmentUtils;
 import me.yarinlevi.qpunishments.support.velocity.messages.MessagesUtils;
+import me.yarinlevi.qpunishments.utilities.Utilities;
 
 import java.sql.SQLException;
 
@@ -15,6 +16,7 @@ import java.sql.SQLException;
  * @author YarinQuapi
  */
 public class BanCommand implements SimpleCommand {
+
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
@@ -26,9 +28,12 @@ public class BanCommand implements SimpleCommand {
             PunishmentBuilder punishmentBuilder;
 
             try {
-                punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, false);
+                if (Utilities.validIP(args[1])) {
+                    punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, true);
+                } else {
+                    punishmentBuilder = PunishmentUtils.createPunishmentBuilder(sender, args, PunishmentType.BAN, false);
+                }
             } catch (PlayerNotFoundException e) {
-
                 sender.sendMessage(MessagesUtils.getMessage("player_not_found"));
                 return;
             } catch (NotEnoughArgumentsException e) {
@@ -51,10 +56,5 @@ public class BanCommand implements SimpleCommand {
                 sender.sendMessage(MessagesUtils.getMessage("player_punished"));
             }
         }
-    }
-
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("qpunishments.command.ban");
     }
 }
